@@ -6,7 +6,7 @@ import { DadosRevisaoReenvio } from '../revisao-confirmacao.model';
 @Component({
   selector: 'app-revisao-confirmacao',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './revisao-confirmacao.component.html',
 })
 export class RevisaoConfirmacaoComponent {
