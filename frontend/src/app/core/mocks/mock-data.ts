@@ -303,6 +303,17 @@ export function obterRelatorioCalculado(email: string): RelatorioAtividades {
   };
 }
 
+export const REVISAO_CONFIRMACAO_MOCK = {
+  solicitacaoId: 8,
+  itensCorrigidos: [
+    { atividadeId: 3, titulo: 'Iniciação Científica PIBIC/CNPq', cargaHoraria: 45, natureza: 'ACC' },
+  ],
+  novosComprovantes: ['certificado_corrigido.pdf'],
+  observacoesAvaliador: 'Reenviar com assinatura digitalizada do orientador.',
+  statusAnterior: 'COM_PENDENCIAS',
+  statusNovo: 'SUBMETIDA',
+};
+
 export const ATIVIDADES_MOCK_INICIAIS: Atividade[] = ATIVIDADES_MOCK.map((a) => ({ ...a }));
 
 export function resetarAtividadesMock(): void {
