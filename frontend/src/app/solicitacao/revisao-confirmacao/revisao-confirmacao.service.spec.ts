@@ -23,7 +23,7 @@ describe('RevisaoConfirmacaoService', () => {
     service.listar().subscribe((res) => {
       expect(res.solicitacaoId).toBe(8);
     });
-    const req = httpMock.expectOne('/revisao-confirmacao');
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/revisao-confirmacao');
     expect(req.request.method).toBe('GET');
     req.flush({
       solicitacaoId: 8,
@@ -38,7 +38,7 @@ describe('RevisaoConfirmacaoService', () => {
     service.confirmar(8).subscribe((res) => {
       expect(res.solicitacaoId).toBe(8);
     });
-    const req = httpMock.expectOne('/revisao-confirmacao');
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/revisao-confirmacao');
     expect(req.request.method).toBe('PATCH');
     req.flush({
       solicitacaoId: 8,
@@ -57,7 +57,7 @@ describe('RevisaoConfirmacaoService', () => {
         expect(err.message).toContain('Apenas estudantes');
       },
     });
-    const req = httpMock.expectOne('/revisao-confirmacao');
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/revisao-confirmacao');
     req.flush('Apenas estudantes podem confirmar o reenvio.', {
       status: 403,
       statusText: 'Forbidden',

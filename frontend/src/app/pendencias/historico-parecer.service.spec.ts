@@ -23,17 +23,30 @@ describe('HistoricoParecerService', () => {
     service.listarPorEstudante().subscribe((res) => {
       expect(res.length).toBeGreaterThan(0);
     });
-    const req = httpMock.expectOne('/historico-pareceres');
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
     expect(req.request.method).toBe('GET');
-    req.flush([{ atividadeId: 1, titulo: 'Teste', natureza: 'ACC', categoria: 'ENSINO', cargaHorariaEmHoras: 30, statusAtual: 'COM_PENDENCIAS', pendenciasAtivas: true, pareceres: [] }]);
+    req.flush([
+      {
+        atividadeId: 1,
+        titulo: 'Teste',
+        natureza: 'ACC',
+        categoria: 'ENSINO',
+        cargaHorariaEmHoras: 30,
+        statusAtual: 'COM_PENDENCIAS',
+        pendenciasAtivas: true,
+        pareceres: [],
+      },
+    ]);
   });
 
   it('deve buscar por atividade via GET', () => {
     service.buscarPorAtividade(1).subscribe((res) => {
       expect(res.length).toBe(1);
     });
-    const req = httpMock.expectOne('/historico-pareceres/atividade/1');
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres/atividade/1');
     expect(req.request.method).toBe('GET');
-    req.flush([{ id: 101, atividadeId: 1, dataAvaliacao: '2026-08-20', tipoParecer: 'CORRECAO' as any }]);
+    req.flush([
+      { id: 101, atividadeId: 1, dataAvaliacao: '2026-08-20', tipoParecer: 'CORRECAO' as any },
+    ]);
   });
 });
