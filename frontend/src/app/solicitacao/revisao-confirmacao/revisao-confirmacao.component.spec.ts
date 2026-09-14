@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RevisaoConfirmacaoComponent } from './revisao-confirmacao.component';
 
@@ -34,11 +34,12 @@ describe('RevisaoConfirmacaoComponent', () => {
     expect(texto).toContain('certificado_corrigido.pdf');
   });
 
-  it('deve bloquear edicao e retornar ao modo leitura apos confirmacao', () => {
+  it('deve bloquear edicao e retornar ao modo leitura apos confirmacao', fakeAsync(() => {
     const componente = fixture.componentInstance;
     componente.confirmar();
+    tick(600);
     fixture.detectChanges();
     expect(componente.bloqueado()).toBe(true);
     expect(componente.modoLeitura()).toBe(true);
-  });
+  }));
 });
