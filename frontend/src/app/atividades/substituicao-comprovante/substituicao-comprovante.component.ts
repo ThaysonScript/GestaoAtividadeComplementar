@@ -6,7 +6,7 @@ import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
 @Component({
   selector: 'app-substituicao-comprovante',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './substituicao-comprovante.component.html',
 })
 export class SubstituicaoComprovanteComponent {
