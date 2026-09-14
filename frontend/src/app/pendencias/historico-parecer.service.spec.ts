@@ -63,7 +63,7 @@ describe('HistoricoParecerService', () => {
   it('deve traduzir erro 404 ao buscar por atividade', () => {
     service.buscarPorAtividade(99).subscribe({
       error: (err: Error) => {
-        expect(err.message).toContain('Não foi possível carregar');
+        expect(err.message).toContain('Atividade não encontrada');
       },
     });
     const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres/atividade/99');
