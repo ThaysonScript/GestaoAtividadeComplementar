@@ -1,8 +1,21 @@
-<section class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8 space-y-6" aria-label="Substituição de Comprovante">
-  <div class="border-b border-[#e1e3e4] pb-4">
-    <h2 class="text-lg font-bold text-[#191c1d]">Substituição de Comprovante</h2>
-    <p class="text-xs text-[#707974] mt-1">Atividade: <span class="font-semibold">{{ atividade().titulo }}</span> (#{{ atividade().id }})</p>
-  </div>
+  <div class="min-h-screen flex flex-col bg-[#f8f9fa] font-sans text-[#191c1d] antialiased">
+  <main class="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-8 py-8">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight mb-1">Substituição de Comprovante</h1>
+        <p class="text-sm text-[#707974]">Atualize o comprovante da atividade selecionada.</p>
+      </div>
+      <a routerLink="/dashboard" class="text-sm font-medium text-[#003629] hover:underline self-start">Voltar ao painel</a>
+    </div>
+
+    <section
+      class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8 space-y-6"
+      aria-label="Substituição de Comprovante"
+    >
+      <div class="border-b border-[#e1e3e4] pb-4">
+        <h2 class="text-lg font-bold text-[#191c1d]">Atividade Selecionada</h2>
+        <p class="text-xs text-[#707974] mt-1">{{ atividade().titulo }} (#{{ atividade().id }})</p>
+      </div>
 
   @if (bloqueado()) {
     <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 text-xs text-[#707974] flex items-center gap-2">
@@ -63,4 +76,6 @@
       }
     </div>
   }
-</section>
+  </section>
+  </main>
+</div>
