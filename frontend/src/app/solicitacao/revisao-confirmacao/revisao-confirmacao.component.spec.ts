@@ -20,7 +20,7 @@ describe('RevisaoConfirmacaoComponent', () => {
       providers: [provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(RevisaoConfirmacaoComponent);
-    fixture.componentRef.setInput('dados', mockDados);
+    fixture.componentInstance.dados.set(mockDados as any);
     fixture.detectChanges();
   });
 
