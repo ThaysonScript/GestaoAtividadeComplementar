@@ -3,28 +3,49 @@
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold tracking-tight mb-1">Pendências e Histórico de Pareceres</h1>
-        <p class="text-sm text-[#707974]">Consulte as avaliações e orientações do avaliador para cada atividade.</p>
+        <p class="text-sm text-[#707974]">
+          Consulte as avaliações e orientações do avaliador para cada atividade.
+        </p>
       </div>
-      <a routerLink="/dashboard" class="text-sm font-medium text-[#003629] hover:underline self-start">Voltar ao painel</a>
+      <a
+        routerLink="/dashboard"
+        class="text-sm font-medium text-[#003629] hover:underline self-start"
+        >Voltar ao painel</a
+      >
     </div>
 
     @if (carregando()) {
       <div class="flex flex-col items-center justify-center gap-3 py-16 text-[#404945]">
-        <span class="material-symbols-outlined animate-spin text-3xl text-[#003629]">progress_activity</span>
+        <span class="material-symbols-outlined animate-spin text-3xl text-[#003629]"
+          >progress_activity</span
+        >
         <p class="text-sm">Carregando histórico de pareceres...</p>
       </div>
     } @else if (mensagemErro()) {
-      <div role="alert" class="mb-6 p-4 bg-[#ffdad6] text-[#93000a] rounded-lg flex items-start gap-3 border border-[#ba1a1a]/20 text-sm">
+      <div
+        role="alert"
+        class="mb-6 p-4 bg-[#ffdad6] text-[#93000a] rounded-lg flex items-start gap-3 border border-[#ba1a1a]/20 text-sm"
+      >
         <span class="material-symbols-outlined text-base shrink-0">error</span>
         <div class="flex-1">
           <p>{{ mensagemErro() }}</p>
-          <button type="button" (click)="carregarDados()" class="mt-3 px-3 py-1.5 bg-[#ba1a1a] text-white text-xs font-semibold rounded-lg hover:bg-[#93000a] transition-colors">Tentar novamente</button>
+          <button
+            type="button"
+            (click)="carregarDados()"
+            class="mt-3 px-3 py-1.5 bg-[#ba1a1a] text-white text-xs font-semibold rounded-lg hover:bg-[#93000a] transition-colors"
+          >
+            Tentar novamente
+          </button>
         </div>
       </div>
     } @else if (semAtividades()) {
-      <div class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-10 flex flex-col items-center justify-center gap-3 text-center">
+      <div
+        class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-10 flex flex-col items-center justify-center gap-3 text-center"
+      >
         <span class="material-symbols-outlined text-4xl text-[#707974]">history_edu</span>
-        <p class="text-sm text-[#404945]">Nenhuma atividade com histórico de pareceres encontrado.</p>
+        <p class="text-sm text-[#404945]">
+          Nenhuma atividade com histórico de pareceres encontrado.
+        </p>
       </div>
     } @else {
       <div class="flex flex-col gap-6">
@@ -38,20 +59,29 @@
               class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 p-5 sm:p-6 border-b border-[#e1e3e4]"
               [ngClass]="{
                 'bg-[#ffdad6]/10': atividade.pendenciasAtivas,
-                'bg-[#e6efe9]/20': !atividade.pendenciasAtivas && atividade.pareceres.length > 0
+                'bg-[#e6efe9]/20': !atividade.pendenciasAtivas && atividade.pareceres.length > 0,
               }"
             >
               <div class="min-w-0">
                 <div class="flex items-center gap-2 mb-1">
                   <span
                     class="inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full border"
-                    [ngClass]="atividade.pendenciasAtivas ? 'bg-[#fff3d6] text-[#7a5900] border-[#ffe082]' : 'bg-[#c3ecd2] text-[#00522e] border-[#003629]/20'"
+                    [ngClass]="
+                      atividade.pendenciasAtivas
+                        ? 'bg-[#fff3d6] text-[#7a5900] border-[#ffe082]'
+                        : 'bg-[#c3ecd2] text-[#00522e] border-[#003629]/20'
+                    "
                   >
-                    {{ atividade.pendenciasAtivas ? 'Correção necessária' : 'Mantido / Pré-aprovado' }}
+                    {{
+                      atividade.pendenciasAtivas ? 'Correção necessária' : 'Mantido / Pré-aprovado'
+                    }}
                   </span>
                 </div>
                 <h2 class="text-base font-bold text-[#191c1d] truncate">{{ atividade.titulo }}</h2>
-                <p class="text-xs text-[#707974] mt-0.5">{{ atividade.natureza }} • {{ atividade.categoria }} • {{ atividade.cargaHorariaEmHoras }}h</p>
+                <p class="text-xs text-[#707974] mt-0.5">
+                  {{ atividade.natureza }} • {{ atividade.categoria }} •
+                  {{ atividade.cargaHorariaEmHoras }}h
+                </p>
               </div>
               <div class="text-xs text-[#404945] shrink-0">
                 <p>Status atual:</p>
@@ -61,17 +91,21 @@
 
             <!-- Linha do tempo dos pareceres -->
             <div class="p-5 sm:p-6">
-              <h3 class="text-sm font-semibold text-[#404945] mb-4">Linha do tempo das avaliações</h3>
+              <h3 class="text-sm font-semibold text-[#404945] mb-4">
+                Linha do tempo das avaliações
+              </h3>
               <ol class="relative border-l-2 border-[#e1e3e4] ml-1 pl-5 space-y-6">
                 @for (parecer of atividade.pareceres; track parecer.id; let i = $index) {
                   <li class="relative">
-                    <span class="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm"
+                    <span
+                      class="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm"
                       [ngClass]="{
                         'bg-[#ba1a1a]': parecer.tipoParecer === 'CORRECAO',
                         'bg-[#b78103]': parecer.tipoParecer === 'MANTIDO',
-                        'bg-[#003629]': parecer.tipoParecer === 'PRE_APROVADO'
+                        'bg-[#003629]': parecer.tipoParecer === 'PRE_APROVADO',
                       }"
-                      aria-hidden="true"></span>
+                      aria-hidden="true"
+                    ></span>
                     <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 space-y-2">
                       <div class="flex items-center justify-between gap-3">
                         <span
@@ -80,29 +114,46 @@
                         >
                           {{ rotuloParecer(parecer.tipoParecer) }}
                         </span>
-                        <time class="text-[11px] text-[#707974] font-medium" [attr.datetime]="parecer.dataAvaliacao">
+                        <time
+                          class="text-[11px] text-[#707974] font-medium"
+                          [attr.datetime]="parecer.dataAvaliacao"
+                        >
                           Avaliado em {{ dataFormatada(parecer.dataAvaliacao) }}
                         </time>
                       </div>
                       @if (parecer.justificativa) {
                         <div>
-                          <p class="text-[11px] font-semibold text-[#404945] mb-0.5">Justificativa / Observação:</p>
-                          <p class="text-xs text-[#191c1d] leading-relaxed">{{ parecer.justificativa }}</p>
+                          <p class="text-[11px] font-semibold text-[#404945] mb-0.5">
+                            Justificativa / Observação:
+                          </p>
+                          <p class="text-xs text-[#191c1d] leading-relaxed">
+                            {{ parecer.justificativa }}
+                          </p>
                         </div>
                       }
                       @if (parecer.observacoes) {
                         <div class="bg-[#fff8e1]/40 border border-[#ffe082] rounded-md p-3">
-                          <p class="text-[11px] font-semibold text-[#7a5900] mb-0.5">Observações do avaliador:</p>
-                          <p class="text-xs text-[#404945] leading-relaxed">{{ parecer.observacoes }}</p>
+                          <p class="text-[11px] font-semibold text-[#7a5900] mb-0.5">
+                            Observações do avaliador:
+                          </p>
+                          <p class="text-xs text-[#404945] leading-relaxed">
+                            {{ parecer.observacoes }}
+                          </p>
                         </div>
                       }
-                      @if (parecer.artigoRegulamento || parecer.cargaHorariaAproveitavel !== undefined) {
+                      @if (
+                        parecer.artigoRegulamento || parecer.cargaHorariaAproveitavel !== undefined
+                      ) {
                         <div class="flex flex-wrap gap-4 text-[11px] text-[#707974] pt-1">
                           @if (parecer.artigoRegulamento) {
-                            <span class="font-semibold text-[#003629]">Regulamento: {{ parecer.artigoRegulamento }}</span>
+                            <span class="font-semibold text-[#003629]"
+                              >Regulamento: {{ parecer.artigoRegulamento }}</span
+                            >
                           }
                           @if (parecer.cargaHorariaAproveitavel !== undefined) {
-                            <span class="font-semibold text-[#191c1d]">Horas aproveitáveis: {{ parecer.cargaHorariaAproveitavel }}h</span>
+                            <span class="font-semibold text-[#191c1d]"
+                              >Horas aproveitáveis: {{ parecer.cargaHorariaAproveitavel }}h</span
+                            >
                           }
                         </div>
                       }

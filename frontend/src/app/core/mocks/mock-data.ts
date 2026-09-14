@@ -306,7 +306,12 @@ export function obterRelatorioCalculado(email: string): RelatorioAtividades {
 export const REVISAO_CONFIRMACAO_MOCK = {
   solicitacaoId: 8,
   itensCorrigidos: [
-    { atividadeId: 3, titulo: 'Iniciação Científica PIBIC/CNPq', cargaHoraria: 45, natureza: 'ACC' },
+    {
+      atividadeId: 3,
+      titulo: 'Iniciação Científica PIBIC/CNPq',
+      cargaHoraria: 45,
+      natureza: 'ACC',
+    },
   ],
   novosComprovantes: ['certificado_corrigido.pdf'],
   observacoesAvaliador: 'Reenviar com assinatura digitalizada do orientador.',
