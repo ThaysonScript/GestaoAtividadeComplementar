@@ -1,0 +1,66 @@
+<section class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8 space-y-6" aria-label="Substituição de Comprovante">
+  <div class="border-b border-[#e1e3e4] pb-4">
+    <h2 class="text-lg font-bold text-[#191c1d]">Substituição de Comprovante</h2>
+    <p class="text-xs text-[#707974] mt-1">Atividade: <span class="font-semibold">{{ atividade().titulo }}</span> (#{{ atividade().id }})</p>
+  </div>
+
+  @if (bloqueado()) {
+    <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 text-xs text-[#707974] flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#003629]">lock</span>
+      <span>Esta atividade está homologada ou não possui pendências. A substituição está bloqueada.</span>
+    </div>
+  } @else {
+    <div class="space-y-4">
+      <h3 class="text-sm font-semibold text-[#404945]">Comprovante Atual</h3>
+      <div class="bg-[#fff8e1]/40 border border-[#ffe082] rounded-lg p-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-2xl text-[#b78103]">task</span>
+          <div>
+            <p class="text-sm font-medium text-[#191c1d]">Certificado cadastrado</p>
+            <p class="text-xs text-[#707974]">Documento já registrado no sistema</p>
+          </div>
+        </div>
+        <span class="text-xs font-semibold bg-[#c3ecd2] text-[#00522e] px-2.5 py-0.5 rounded-full">Atual</span>
+      </div>
+
+      <h3 class="text-sm font-semibold text-[#404945] mt-4">Novo Comprovante</h3>
+      <p class="text-xs text-[#707974]">Substitua o arquivo existente por um novo comprovante (PDF, PNG ou JPEG, até 5MB).</p>
+
+      <label
+        class="cursor-pointer inline-flex items-center gap-2 px-4 py-3 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#1b4d3e] transition-colors shadow-sm"
+      >
+        <span class="material-symbols-outlined text-sm">upload_file</span>
+        <span>Enviar novo comprovante</span>
+        <input
+          type="file"
+          accept=".pdf,.png,.jpg,.jpeg"
+          (change)="onFileSelected($event)"
+          class="hidden"
+        />
+      </label>
+
+      @if (arquivo()) {
+        <div class="bg-[#e6efe9] border border-[#003629]/20 rounded-lg p-3 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="material-symbols-outlined text-[#00522e] shrink-0">attach_file</span>
+            <p class="text-sm font-medium text-[#191c1d] truncate">{{ arquivo()?.name }}</p>
+          </div>
+          <button
+            type="button"
+            (click)="removerArquivo()"
+            class="text-xs text-[#ba1a1a] hover:underline font-semibold shrink-0"
+          >
+            Remover
+          </button>
+        </div>
+      }
+
+      @if (erroArquivo()) {
+        <div class="p-3 bg-[#ffdad6] text-[#93000a] rounded-lg border border-[#ba1a1a]/20 text-xs font-medium flex items-start gap-2">
+          <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">error</span>
+          <span>{{ erroArquivo() }}</span>
+        </div>
+      }
+    </div>
+  }
+</section>
