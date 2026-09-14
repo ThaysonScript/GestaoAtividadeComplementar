@@ -1,8 +1,9 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
 import { SubstituicaoService } from '../../solicitacao/substituicao.service';
+import { AtividadeService } from '../atividade.service';
 
 @Component({
   selector: 'app-substituicao-comprovante',
@@ -10,7 +11,8 @@ import { SubstituicaoService } from '../../solicitacao/substituicao.service';
   imports: [CommonModule],
   templateUrl: './substituicao-comprovante.component.html',
 })
-export class SubstituicaoComprovanteComponent {
+export class SubstituicaoComprovanteComponent implements OnInit {
+  private readonly atividadeService = inject(AtividadeService);
   private readonly substituicaoService = inject(SubstituicaoService);
   readonly substituindo = signal(false);
 
@@ -19,6 +21,17 @@ export class SubstituicaoComprovanteComponent {
   readonly arquivo = signal<File | null>(null);
   readonly erroArquivo = signal<string | null>(null);
   readonly bloqueado = computed(() => this.atividade() && !this.atividade().pendencias);
+
+  ngOnInit(): void {
+    if (this.atividade().id) {
+      this.atividadeService.buscarPorId(this.atividade().id).subscribe({
+        next: (atividade) => {
+          // Dados carregados via mock; substituicao pode ser feita diretamente
+        },
+        error: () => {},
+      });
+    }
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
