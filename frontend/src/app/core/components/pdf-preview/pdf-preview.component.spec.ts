@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { PdfPreviewComponent } from './pdf-preview.component';
 
 describe('PdfPreviewComponent', () => {
@@ -18,7 +19,7 @@ describe('PdfPreviewComponent', () => {
 
   it('deve abrir janela quando url e definida', () => {
     const componente = fixture.componentInstance;
-    const spy = spyOn(window, 'open');
+    const spy = vi.spyOn(window, 'open');
     componente.url = 'http://teste.pdf';
     expect(spy).toHaveBeenCalledWith('http://teste.pdf', '_blank');
   });

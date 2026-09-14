@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { FileDropzoneComponent } from './file-dropzone.component';
 
 describe('FileDropzoneComponent', () => {
@@ -16,7 +17,7 @@ describe('FileDropzoneComponent', () => {
 
   it('deve emitir remover ao clicar no botao', () => {
     const componente = fixture.componentInstance;
-    spyOn(componente.remover, 'emit');
+    vi.spyOn(componente.remover, 'emit');
     componente.remover.emit();
     expect(componente.remover.emit).toHaveBeenCalled();
   });
