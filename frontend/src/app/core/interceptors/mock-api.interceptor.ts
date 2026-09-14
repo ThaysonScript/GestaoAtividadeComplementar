@@ -8,6 +8,7 @@ import {
   REGULAMENTOS_MOCK,
   CURSOS_MOCK,
   USUARIOS_MOCK,
+  REVISAO_CONFIRMACAO_MOCK,
   gerarTokenMock,
   obterProgressoCalculado,
   obterRelatorioCalculado,
@@ -44,7 +45,8 @@ function processarRotasMock(
     handleCursosMocks(req, url, method) ??
     handleUsuariosMocks(req, url, method) ??
     handleRelatoriosMocks(req, url, method) ??
-    handleNotificacoesMocks(req, url, method)
+    handleNotificacoesMocks(req, url, method) ??
+    handleRevisaoConfirmacaoMocks(req, url, method)
   );
 }
 
@@ -553,6 +555,31 @@ function handleNotificacoesMocks(
 
     NOTIFICACOES_MOCK.forEach((n) => (n.lida = true));
     return jsonResponse(204, null);
+  }
+
+  return null;
+}
+
+function handleRevisaoConfirmacaoMocks(
+  req: HttpRequest<unknown>,
+  url: string,
+  method: string,
+): Observable<HttpResponse<unknown>> | null {
+  if (!url.includes('/revisao-confirmacao')) return null;
+
+  if (url.endsWith('/revisao-confirmacao') && method === 'GET') {
+    return jsonResponse(200, REVISAO_CONFIRMACAO_MOCK);
+  }
+
+  if (url.endsWith('/revisao-confirmacao') && method === 'PATCH') {
+    const bodyObj = extrairDadosCorpo(req);
+    const confirmado = (bodyObj['confirmado'] as boolean) ?? true;
+    return jsonResponse(200, {
+      ...REVISAO_CONFIRMACAO_MOCK,
+      statusNovo: 'SUBMETIDA',
+      bloqueado: true,
+      confirmado,
+    });
   }
 
   return null;

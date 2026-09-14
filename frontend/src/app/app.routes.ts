@@ -126,6 +126,14 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['AVALIADOR', 'ADMINISTRADOR'])],
   },
   {
+    path: 'revisao-confirmacao',
+    loadComponent: () =>
+      import('./solicitacao/revisao-confirmacao/revisao-confirmacao.component').then(
+        (m) => m.RevisaoConfirmacaoComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
+  },
+  {
     path: 'pendencias',
     loadComponent: () =>
       import('./pendencias/pendencias-historico.component').then(

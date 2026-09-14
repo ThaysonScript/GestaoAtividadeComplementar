@@ -1,7 +1,10 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AtividadeComHistoricoParecer, ParecerAvaliadorHistorico, TipoParecerAvaliador } from '../atividades/historico-parecer.model';
+import {
+  AtividadeComHistoricoParecer,
+  TipoParecerAvaliador,
+} from '../atividades/historico-parecer.model';
 
 @Component({
   selector: 'app-pendencias-historico',
@@ -16,9 +19,7 @@ export class PendenciasHistoricoComponent implements OnInit {
 
   readonly semAtividades = computed(() => this.atividades().length === 0 && !this.carregando());
 
-  readonly temPendencias = computed(() =>
-    this.atividades().some((a) => a.pendenciasAtivas),
-  );
+  readonly temPendencias = computed(() => this.atividades().some((a) => a.pendenciasAtivas));
 
   ngOnInit(): void {
     this.carregarDados();
@@ -107,10 +108,14 @@ export class PendenciasHistoricoComponent implements OnInit {
 
   rotuloParecer(tipo: TipoParecerAvaliador): string {
     switch (tipo) {
-      case 'CORRECAO': return 'Correção necessária';
-      case 'MANTIDO': return 'Mantido';
-      case 'PRE_APROVADO': return 'Pré-aprovado';
-      default: return tipo;
+      case 'CORRECAO':
+        return 'Correção necessária';
+      case 'MANTIDO':
+        return 'Mantido';
+      case 'PRE_APROVADO':
+        return 'Pré-aprovado';
+      default:
+        return tipo;
     }
   }
 

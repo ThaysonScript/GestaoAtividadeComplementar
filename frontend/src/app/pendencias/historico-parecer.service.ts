@@ -3,7 +3,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { API_BASE_URL } from '../api.config';
-import { AtividadeComHistoricoParecer, ParecerAvaliadorHistorico } from '../atividades/historico-parecer.model';
+import {
+  AtividadeComHistoricoParecer,
+  ParecerAvaliadorHistorico,
+} from '../atividades/historico-parecer.model';
 import { mensagemDoBackend, traduzirErroComum } from '../core/interceptors/erro-util';
 
 @Injectable({
@@ -34,7 +37,11 @@ export class HistoricoParecerService {
   private traduzirErro(error: HttpErrorResponse): string {
     const comum = traduzirErroComum(error);
     if (comum) return comum;
-    if (error.status === 403) return mensagemDoBackend(error) ?? 'Apenas estudantes podem consultar o histórico.';
-    return mensagemDoBackend(error) ?? 'Não foi possível carregar o histórico de pareceres. Tente novamente.';
+    if (error.status === 403)
+      return mensagemDoBackend(error) ?? 'Apenas estudantes podem consultar o histórico.';
+    return (
+      mensagemDoBackend(error) ??
+      'Não foi possível carregar o histórico de pareceres. Tente novamente.'
+    );
   }
 }
