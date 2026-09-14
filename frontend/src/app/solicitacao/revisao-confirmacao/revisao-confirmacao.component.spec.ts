@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { RevisaoConfirmacaoComponent } from './revisao-confirmacao.component';
+import { RevisaoConfirmacaoService } from './revisao-confirmacao.service';
 
 const mockDados = {
   solicitacaoId: 8,
@@ -11,24 +13,34 @@ const mockDados = {
   statusNovo: 'SUBMETIDA',
 };
 
+class MockRevisaoService {
+  listar() { return of(mockDados); }
+  confirmar() { return of({ ...mockDados, bloqueado: true, confirmado: true }); }
+}
+
 describe('RevisaoConfirmacaoComponent', () => {
   let fixture: ComponentFixture<RevisaoConfirmacaoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RevisaoConfirmacaoComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: RevisaoConfirmacaoService, useClass: MockRevisaoService },
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(RevisaoConfirmacaoComponent);
-    fixture.componentInstance.dados.set(mockDados as any);
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('deve ser criado', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('deve exibir dados corrigidos e novos comprovantes', () => {
+  it('deve exibir dados corrigidos e novos comprovantes', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
     const texto = fixture.nativeElement.textContent as string;
     expect(texto).toContain('Monitoria');
     expect(texto).toContain('certificado_corrigido.pdf');
