@@ -63,4 +63,15 @@ describe('RevisaoConfirmacaoService', () => {
       statusText: 'Forbidden',
     });
   });
+
+  it('deve traduzir erro 404 ao confirmar', () => {
+    service.confirmar(99).subscribe({
+      error: (err: Error) => {
+        expect(err.message).toContain('Não foi possível');
+      },
+    });
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/revisao-confirmacao');
+    expect(req.request.method).toBe('PATCH');
+    req.flush({ message: 'Reenvio não encontrado.' }, { status: 404, statusText: 'Not Found' });
+  });
 });
