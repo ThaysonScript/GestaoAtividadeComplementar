@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { RevisaoConfirmacaoComponent } from './revisao-confirmacao.component';
@@ -14,8 +14,12 @@ const mockDados = {
 };
 
 class MockRevisaoService {
-  listar() { return of(mockDados); }
-  confirmar() { return of({ ...mockDados, bloqueado: true, confirmado: true }); }
+  listar() {
+    return of(mockDados);
+  }
+  confirmar() {
+    return of({ ...mockDados, bloqueado: true, confirmado: true });
+  }
 }
 
 describe('RevisaoConfirmacaoComponent', () => {

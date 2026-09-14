@@ -25,16 +25,30 @@ describe('RevisaoConfirmacaoService', () => {
     });
     const req = httpMock.expectOne('/revisao-confirmacao');
     expect(req.request.method).toBe('GET');
-    req.flush({ solicitacaoId: 8, itensCorrigidos: [], novosComprovantes: [], statusAnterior: 'COM_PENDENCIAS', statusNovo: 'SUBMETIDA' });
+    req.flush({
+      solicitacaoId: 8,
+      itensCorrigidos: [],
+      novosComprovantes: [],
+      statusAnterior: 'COM_PENDENCIAS',
+      statusNovo: 'SUBMETIDA',
+    });
   });
 
   it('deve confirmar revisao via PATCH', () => {
     service.confirmar(8).subscribe((res) => {
-      expect(res.confirmado).toBe(true);
+      expect(res.solicitacaoId).toBe(8);
     });
     const req = httpMock.expectOne('/revisao-confirmacao');
     expect(req.request.method).toBe('PATCH');
-    req.flush({ solicitacaoId: 8, itensCorrigidos: [], novosComprovantes: [], statusAnterior: 'COM_PENDENCIAS', statusNovo: 'SUBMETIDA', confirmado: true, bloqueado: true });
+    req.flush({
+      solicitacaoId: 8,
+      itensCorrigidos: [],
+      novosComprovantes: [],
+      statusAnterior: 'COM_PENDENCIAS',
+      statusNovo: 'SUBMETIDA',
+      confirmado: true,
+      bloqueado: true,
+    });
   });
 
   it('deve traduzir erro 403', () => {
@@ -44,6 +58,9 @@ describe('RevisaoConfirmacaoService', () => {
       },
     });
     const req = httpMock.expectOne('/revisao-confirmacao');
-    req.flush('Apenas estudantes podem confirmar o reenvio.', { status: 403, statusText: 'Forbidden' });
+    req.flush('Apenas estudantes podem confirmar o reenvio.', {
+      status: 403,
+      statusText: 'Forbidden',
+    });
   });
 });
