@@ -27,7 +27,7 @@ export class RevisaoConfirmacaoComponent implements OnInit {
     this.carregarDados();
   }
 
-  private carregarDados(): void {
+  carregarDados(): void {
     this.carregando.set(true);
     this.mensagemErro.set(null);
     this.service.listar().subscribe({

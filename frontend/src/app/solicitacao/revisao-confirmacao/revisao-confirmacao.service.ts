@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { API_BASE_URL } from '../api.config';
-import { DadosRevisaoReenvio } from './revisao-confirmacao.model';
-import { mensagemDoBackend, traduzirErroComum } from '../core/interceptors/erro-util';
+import { API_BASE_URL } from '../../api.config';
+import { DadosRevisaoReenvio } from '../revisao-confirmacao.model';
+import { mensagemDoBackend, traduzirErroComum } from '../../core/interceptors/erro-util';
 
 @Injectable({
   providedIn: 'root',
