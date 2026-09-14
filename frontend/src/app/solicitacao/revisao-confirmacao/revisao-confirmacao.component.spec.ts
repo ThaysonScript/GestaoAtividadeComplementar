@@ -58,4 +58,18 @@ describe('RevisaoConfirmacaoComponent', () => {
     expect(componente.bloqueado()).toBe(true);
     expect(componente.modoLeitura()).toBe(true);
   });
+
+  it('deve cancelar e desbloquear edicao', async () => {
+    const componente = fixture.componentInstance;
+    componente.confirmar();
+    await new Promise((r) => setTimeout(r, 700));
+    componente.cancelar();
+    expect(componente.bloqueado()).toBe(false);
+    expect(componente.confirmado()).toBe(false);
+  });
+
+  it('deve exibir estado de carregamento inicialmente', async () => {
+    await fixture.whenStable();
+    expect(fixture.componentInstance.carregando()).toBe(false);
+  });
 });

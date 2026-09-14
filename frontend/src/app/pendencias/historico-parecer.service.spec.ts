@@ -39,6 +39,24 @@ describe('HistoricoParecerService', () => {
     ]);
   });
 
+  it('deve traduzir erro 403', () => {
+    service.listarPorEstudante().subscribe({
+      error: (err: Error) => {
+        expect(err.message).toContain('Apenas estudantes');
+      },
+    });
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
+    req.flush('Apenas estudantes podem consultar o histórico.', { status: 403, statusText: 'Forbidden' });
+  });
+
+  it('deve listar vazio quando resposta e vazia', () => {
+    service.listarPorEstudante().subscribe((res) => {
+      expect(res.length).toBe(0);
+    });
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
+    req.flush([]);
+  });
+
   it('deve buscar por atividade via GET', () => {
     service.buscarPorAtividade(1).subscribe((res) => {
       expect(res.length).toBe(1);
