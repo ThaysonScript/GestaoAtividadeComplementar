@@ -2,6 +2,7 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
+import { SubstituicaoService } from '../../solicitacao/substituicao.service';
 
 @Component({
   selector: 'app-substituicao-comprovante',
@@ -10,6 +11,9 @@ import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
   templateUrl: './substituicao-comprovante.component.html',
 })
 export class SubstituicaoComprovanteComponent {
+  private readonly substituicaoService = inject(SubstituicaoService);
+  readonly substituindo = signal(false);
+
   readonly atividade = input.required<{ id: number; titulo: string; status?: string; pendencias?: boolean }>();
   readonly carregando = signal(false);
   readonly arquivo = signal<File | null>(null);
@@ -41,6 +45,16 @@ export class SubstituicaoComprovanteComponent {
       return false;
     }
     this.arquivo.set(file);
+    this.substituindo.set(true);
+    this.substituicaoService.substituir(this.atividade().id, file).subscribe({
+      next: () => {
+        this.substituindo.set(false);
+      },
+      error: () => {
+        this.substituindo.set(false);
+        this.erroArquivo.set('Não foi possível substituir o comprovante. Tente novamente.');
+      },
+    });
     return true;
   }
 

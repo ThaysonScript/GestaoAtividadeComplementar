@@ -46,7 +46,8 @@ function processarRotasMock(
     handleUsuariosMocks(req, url, method) ??
     handleRelatoriosMocks(req, url, method) ??
     handleNotificacoesMocks(req, url, method) ??
-    handleRevisaoConfirmacaoMocks(req, url, method)
+    handleRevisaoConfirmacaoMocks(req, url, method) ??
+    handleSubstituicaoMocks(req, url, method)
   );
 }
 
@@ -557,6 +558,26 @@ function handleNotificacoesMocks(
     return jsonResponse(204, null);
   }
 
+  return null;
+}
+
+function handleSubstituicaoMocks(
+  req: HttpRequest<unknown>,
+  url: string,
+  method: string,
+): Observable<HttpResponse<unknown>> | null {
+  if (!url.includes('/substituicao-comprovante')) return null;
+  if (url.endsWith('/substituicao-comprovante') && method === 'POST') {
+    return jsonResponse(201, {
+      atividadeId: 1,
+      titulo: 'Monitoria Acadêmica de Algoritmos',
+      comprovanteRemovido: false,
+      novoComprovante: 'certificado_corrigido.pdf',
+      validacaoTamanho: true,
+      validacaoTipo: true,
+      bloqueado: false,
+    });
+  }
   return null;
 }
 
