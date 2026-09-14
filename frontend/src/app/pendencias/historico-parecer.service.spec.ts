@@ -46,7 +46,10 @@ describe('HistoricoParecerService', () => {
       },
     });
     const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
-    req.flush('Apenas estudantes podem consultar o histórico.', { status: 403, statusText: 'Forbidden' });
+    req.flush('Apenas estudantes podem consultar o histórico.', {
+      status: 403,
+      statusText: 'Forbidden',
+    });
   });
 
   it('deve listar vazio quando resposta e vazia', () => {
@@ -55,6 +58,16 @@ describe('HistoricoParecerService', () => {
     });
     const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
     req.flush([]);
+  });
+
+  it('deve traduzir erro 404 ao buscar por atividade', () => {
+    service.buscarPorAtividade(99).subscribe({
+      error: (err: Error) => {
+        expect(err.message).toContain('Não foi possível');
+      },
+    });
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres/atividade/99');
+    req.flush({ message: 'Atividade não encontrada.' }, { status: 404, statusText: 'Not Found' });
   });
 
   it('deve buscar por atividade via GET', () => {
