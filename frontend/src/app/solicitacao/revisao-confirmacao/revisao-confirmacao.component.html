@@ -52,7 +52,7 @@
           <div class="space-y-4">
             <h3 class="text-sm font-semibold text-[#404945]">Dados Corrigidos</h3>
             <ul class="flex flex-col gap-2">
-              @for (item of d.itensCorrigidos; track item.atividadeId) {
+              @for (item of itensComPendencia(); track item.atividadeId) {
                 <li
                   class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-3 flex justify-between items-center gap-3"
                 >
@@ -89,11 +89,14 @@
                       <span class="text-[10px] text-[#707974] italic">Nenhum campo alterado</span>
                     }
                     <a
-                      [routerLink]="[
-                        '/substituicao-comprovante',
-                        d.solicitacaoId,
-                        item.atividadeId,
-                      ]"
+                      [routerLink]="
+                        modoLeitura()
+                          ? null
+                          : ['/substituicao-comprovante', d.solicitacaoId, item.atividadeId]
+                      "
+                      [class.pointer-events-none]="modoLeitura()"
+                      [class.opacity-50]="modoLeitura()"
+                      [attr.aria-disabled]="modoLeitura() ? true : null"
                       class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#003629] text-white text-[10px] font-bold rounded-md hover:bg-[#1b4d3e] transition-colors shadow-sm"
                       title="Voltar para corrigir esta atividade"
                     >
