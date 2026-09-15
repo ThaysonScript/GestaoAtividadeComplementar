@@ -34,8 +34,8 @@ public class CertificadoController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		Resource resource;
-		if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_AVALIADOR")
-				|| a.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
+		if (authentication.getAuthorities().stream().anyMatch(
+				a -> a.getAuthority().equals("ROLE_AVALIADOR") || a.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
 			resource = certificadoFacade.obterCertificadoSemRestricao(id);
 		} else {
 			String emailEstudante = authentication.getName();
