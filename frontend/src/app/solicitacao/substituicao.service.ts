@@ -15,18 +15,37 @@ export class SubstituicaoService {
     const formData = new FormData();
     formData.append('atividadeId', id.toString());
     if (arquivo) formData.append('arquivo', arquivo);
-    return this.http.post<DadosSubstituicaoComprovante>(this.apiUrl, formData).pipe(
-      catchError((error: HttpErrorResponse) =>
-        throwError(() => new Error(this.traduzirErro(error))),
-      ),
-    );
+    return this.http
+      .post<DadosSubstituicaoComprovante>(this.apiUrl, formData)
+      .pipe(
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => new Error(this.traduzirErro(error))),
+        ),
+      );
+  }
+
+  atualizarMetadados(
+    id: number,
+    dados: Partial<DadosSubstituicaoComprovante>,
+  ): Observable<DadosSubstituicaoComprovante> {
+    return this.http
+      .patch<DadosSubstituicaoComprovante>(`${this.apiUrl}/${id}`, dados)
+      .pipe(
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => new Error(this.traduzirErro(error))),
+        ),
+      );
   }
 
   private traduzirErro(error: HttpErrorResponse): string {
     const comum = traduzirErroComum(error);
     if (comum) return comum;
-    if (error.status === 403) return mensagemDoBackend(error) ?? 'Apenas estudantes podem substituir comprovantes.';
-    if (error.status === 422) return mensagemDoBackend(error) ?? 'Arquivo inválido ou atividade sem pendência.';
-    return mensagemDoBackend(error) ?? 'Não foi possível substituir o comprovante. Tente novamente.';
+    if (error.status === 403)
+      return mensagemDoBackend(error) ?? 'Apenas estudantes podem substituir comprovantes.';
+    if (error.status === 422)
+      return mensagemDoBackend(error) ?? 'Arquivo inválido ou atividade sem pendência.';
+    return (
+      mensagemDoBackend(error) ?? 'Não foi possível substituir o comprovante. Tente novamente.'
+    );
   }
 }

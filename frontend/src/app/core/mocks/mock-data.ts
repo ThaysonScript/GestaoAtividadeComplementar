@@ -65,6 +65,17 @@ export const ATIVIDADES_MOCK: Atividade[] = [
     dataCadastro: '2026-06-06T14:00:00',
     status: 'PENDENTE',
   },
+  {
+    id: 5,
+    titulo: 'Oficina de Desenvolvimento Mobile',
+    instituicaoResponsavel: 'UFAPE',
+    dataRealizacao: '2026-07-10',
+    cargaHorariaEmHoras: 20,
+    natureza: 'ACEX',
+    categoria: 'EXTENSAO',
+    dataCadastro: '2026-07-11T09:00:00',
+    status: 'COM_PENDENCIAS',
+  },
 ];
 
 // 2. Solicitações de Validação

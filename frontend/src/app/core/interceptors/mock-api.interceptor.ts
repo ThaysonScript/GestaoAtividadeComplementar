@@ -567,17 +567,91 @@ function handleSubstituicaoMocks(
   method: string,
 ): Observable<HttpResponse<unknown>> | null {
   if (!url.includes('/substituicao-comprovante')) return null;
+
+  // POST /substituicao-comprovante
   if (url.endsWith('/substituicao-comprovante') && method === 'POST') {
+    const bodyObj = extrairDadosCorpo(req);
+    const id = Number(bodyObj['atividadeId'] ?? bodyObj['id'] ?? 0);
+    const atividade = ATIVIDADES_MOCK.find((a) => a.id === id);
+
+    if (!atividade) {
+      return jsonResponse(404, { message: 'Atividade não encontrada.' });
+    }
+
+    if (atividade.status !== 'PENDENTE' && atividade.status !== 'COM_PENDENCIAS') {
+      return jsonResponse(422, { message: 'Arquivo inválido ou atividade sem pendência.' });
+    }
+
+    // Validação de arquivo (FormData contém 'arquivo')
+    if (req.body instanceof FormData) {
+      const arquivo = req.body.get('arquivo');
+      if (arquivo instanceof File) {
+        const extensaoValida = /\.(pdf|png|jpe?g)$/i.test(arquivo.name);
+        const tipoValido =
+          arquivo.type === 'application/pdf' ||
+          arquivo.type === 'image/png' ||
+          arquivo.type === 'image/jpeg';
+        const tamanhoValido = arquivo.size <= 5 * 1024 * 1024;
+        const integridadeValida = arquivo.size > 0 && arquivo.name.trim().length > 0;
+
+        if (!tipoValido || !extensaoValida) {
+          return jsonResponse(422, {
+            message: 'Tipo de arquivo inválido. Apenas PDF, PNG ou JPEG são permitidos.',
+          });
+        }
+        if (!integridadeValida) {
+          return jsonResponse(422, {
+            message: 'Arquivo corrompido ou vazio. Verifique a integridade do comprovante.',
+          });
+        }
+        if (!tamanhoValido) {
+          return jsonResponse(422, { message: 'O arquivo excede o limite máximo de 5MB.' });
+        }
+      }
+    }
+
     return jsonResponse(201, {
-      atividadeId: 1,
-      titulo: 'Monitoria Acadêmica de Algoritmos',
+      atividadeId: atividade.id,
+      titulo: atividade.titulo,
+      status: atividade.status ?? '',
       comprovanteRemovido: false,
-      novoComprovante: 'certificado_corrigido.pdf',
+      novoComprovante:
+        req.body instanceof FormData
+          ? (req.body.get('arquivo') as File | null)?.name || 'certificado_corrigido.pdf'
+          : 'certificado_corrigido.pdf',
       validacaoTamanho: true,
       validacaoTipo: true,
-      bloqueado: false,
+      bloqueado: !(atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS'),
+      natureza: atividade.natureza,
+      cargaHoraria: atividade.cargaHorariaEmHoras,
+      descricao: atividade.titulo,
     });
   }
+
+  // PATCH /substituicao-comprovante/:id
+  const idMatch = url.match(/\/substituicao-comprovante\/(\d+)$/);
+  if (idMatch && method === 'PATCH') {
+    const id = Number(idMatch[1]);
+    const atividade = ATIVIDADES_MOCK.find((a) => a.id === id);
+    if (!atividade) {
+      return jsonResponse(404, { message: 'Atividade não encontrada.' });
+    }
+    const bodyObj = extrairDadosCorpo(req);
+    return jsonResponse(200, {
+      atividadeId: id,
+      titulo: atividade.titulo,
+      status: atividade.status ?? '',
+      comprovanteRemovido: (bodyObj['comprovanteRemovido'] as boolean) ?? false,
+      novoComprovante: bodyObj['novoComprovante'] ?? null,
+      validacaoTamanho: true,
+      validacaoTipo: true,
+      bloqueado: !(atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS'),
+      natureza: (bodyObj['natureza'] as string) ?? atividade.natureza,
+      cargaHoraria: Number(bodyObj['cargaHoraria'] ?? atividade.cargaHorariaEmHoras),
+      descricao: (bodyObj['descricao'] as string) ?? atividade.titulo,
+    });
+  }
+
   return null;
 }
 

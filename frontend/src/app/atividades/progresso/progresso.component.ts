@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { ProgressoCargaHoraria } from './progresso.model';
 import { ProgressoService } from './progresso.service';
 import { ProgressoCardComponent } from './progresso-card.component';
-import { FooterComponent } from '../../core/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../../core/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '../../core/components/empty-state/empty-state.component';
 import { ResumoModalidade, calcularResumos, calcularSemAtividades } from './progresso-shared';
@@ -16,7 +15,6 @@ import { ResumoModalidade, calcularResumos, calcularSemAtividades } from './prog
     CommonModule,
     RouterLink,
     ProgressoCardComponent,
-    FooterComponent,
     LoadingSpinnerComponent,
     EmptyStateComponent,
   ],

@@ -2,7 +2,6 @@ import { SituacaoSolicitacaoComponent } from './situacao-solicitacao/situacao-so
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FooterComponent } from '../core/components/footer/footer.component';
 import { LoadingSpinnerComponent } from '../core/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '../core/components/empty-state/empty-state.component';
 import { SummaryCardComponent } from '../core/components/summary-card/summary-card.component';
@@ -22,7 +21,6 @@ import {
     CommonModule,
     RouterLink,
     SituacaoSolicitacaoComponent,
-    FooterComponent,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     SummaryCardComponent,

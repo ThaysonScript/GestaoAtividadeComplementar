@@ -1,107 +1,215 @@
-  <div class="min-h-screen flex flex-col bg-[#f8f9fa] font-sans text-[#191c1d] antialiased">
+<div class="min-h-screen flex flex-col bg-[#f8f9fa] font-sans text-[#191c1d] antialiased">
   <main class="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-8 py-8">
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold tracking-tight mb-1">Substituição de Comprovante</h1>
         <p class="text-sm text-[#707974]">Atualize o comprovante da atividade selecionada.</p>
       </div>
-      <a routerLink="/dashboard" class="text-sm font-medium text-[#003629] hover:underline self-start">Voltar ao painel</a>
+      <a
+        routerLink="/dashboard"
+        class="text-sm font-medium text-[#003629] hover:underline self-start"
+        >Voltar ao painel</a
+      >
     </div>
 
     <section
       class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8 space-y-6"
       aria-label="Substituição de Comprovante"
     >
-      <div class="border-b border-[#e1e3e4] pb-4">
-        <h2 class="text-lg font-bold text-[#191c1d]">Atividade Selecionada</h2>
-        <p class="text-xs text-[#707974] mt-1">{{ atividadeTitulo() }} (#{{ atividadeId() }})</p>
-      </div>
-
-  @if (!bloqueado()) {
-    <form [formGroup]="edicaoForm" (ngSubmit)="salvarEdicao()" class="space-y-4 bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4">
-      <h3 class="text-sm font-semibold text-[#404945]">Editar Dados da Atividade</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="border-b border-[#e1e3e4] pb-4 flex items-center justify-between">
         <div>
-          <label class="block text-xs font-semibold text-[#404945] mb-1" for="natureza">Natureza</label>
-          <select id="natureza" formControlName="natureza" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]">
-            <option value="ACC">ACC</option>
-            <option value="ACEX">ACEX</option>
-          </select>
+          <h2 class="text-lg font-bold text-[#191c1d]">Atividade Selecionada</h2>
+          <p class="text-xs text-[#707974] mt-1">{{ atividadeTitulo() }} (#{{ atividadeId() }})</p>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-[#404945] mb-1" for="cargaHoraria">Carga Horária (h)</label>
-          <input id="cargaHoraria" type="number" min="1" formControlName="cargaHoraria" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]" />
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold text-[#404945] mb-1" for="descricao">Descrição / Observações</label>
-        <textarea id="descricao" formControlName="descricao" rows="3" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629] resize-none"></textarea>
-      </div>
-      <div class="flex justify-end">
-        <button type="submit" class="px-4 py-2 bg-[#003629] text-white text-xs font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors">Salvar Edição</button>
-      </div>
-    </form>
-  }
-
-  @if (bloqueado()) {
-    <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 text-xs text-[#707974] flex items-center gap-2">
-      <span class="material-symbols-outlined text-[#003629]">lock</span>
-      <span>Esta atividade está homologada ou não possui pendências. A substituição está bloqueada.</span>
-    </div>
-  } @else {
-    <div class="space-y-4">
-      <h3 class="text-sm font-semibold text-[#404945]">Comprovante Atual</h3>
-      <div class="bg-[#fff8e1]/40 border border-[#ffe082] rounded-lg p-4 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-2xl text-[#b78103]">task</span>
-          <div>
-            <p class="text-sm font-medium text-[#191c1d]">Certificado cadastrado</p>
-            <p class="text-xs text-[#707974]">Documento já registrado no sistema</p>
-          </div>
-        </div>
-        <span class="text-xs font-semibold bg-[#c3ecd2] text-[#00522e] px-2.5 py-0.5 rounded-full">Atual</span>
-      </div>
-
-      <h3 class="text-sm font-semibold text-[#404945] mt-4">Novo Comprovante</h3>
-      <p class="text-xs text-[#707974]">Substitua o arquivo existente por um novo comprovante (PDF, PNG ou JPEG, até 5MB).</p>
-
-      <label
-        class="cursor-pointer inline-flex items-center gap-2 px-4 py-3 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#1b4d3e] transition-colors shadow-sm"
-      >
-        <span class="material-symbols-outlined text-sm">upload_file</span>
-        <span>Enviar novo comprovante</span>
-        <input
-          type="file"
-          accept=".pdf,.png,.jpg,.jpeg"
-          (change)="onFileSelected($event)"
-          class="hidden"
-        />
-      </label>
-
-      @if (arquivo()) {
-        <div class="bg-[#e6efe9] border border-[#003629]/20 rounded-lg p-3 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="material-symbols-outlined text-[#00522e] shrink-0">attach_file</span>
-            <p class="text-sm font-medium text-[#191c1d] truncate">{{ arquivo()?.name }}</p>
-          </div>
-          <button
-            type="button"
-            (click)="removerArquivo()"
-            class="text-xs text-[#ba1a1a] hover:underline font-semibold shrink-0"
+        @if (dados()?.status) {
+          <span
+            class="text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide"
+            [ngClass]="{
+              'bg-[#fff8e1] text-[#b78103]':
+                dados()?.status === 'PENDENTE' || dados()?.status === 'COM_PENDENCIAS',
+              'bg-[#e6efe9] text-[#00522e]':
+                dados()?.status === 'APROVADA' || dados()?.status === 'HOMOLOGADA',
+              'bg-[#e1e3e4] text-[#707974]': !(
+                dados()?.status === 'PENDENTE' ||
+                dados()?.status === 'COM_PENDENCIAS' ||
+                dados()?.status === 'APROVADA' ||
+                dados()?.status === 'HOMOLOGADA'
+              ),
+            }"
           >
-            Remover
-          </button>
+            {{
+              dados()?.status === 'PENDENTE' || dados()?.status === 'COM_PENDENCIAS'
+                ? 'Correção necessária'
+                : dados()?.status === 'APROVADA' || dados()?.status === 'HOMOLOGADA'
+                  ? 'Mantido / Pré-aprovado'
+                  : dados()?.status
+            }}
+          </span>
+        }
+      </div>
+
+      @if (!bloqueado()) {
+        <form
+          [formGroup]="edicaoForm"
+          (ngSubmit)="salvarEdicao()"
+          class="space-y-4 bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4"
+        >
+          <h3 class="text-sm font-semibold text-[#404945]">Editar Dados da Atividade</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-[#404945] mb-1" for="natureza"
+                >Natureza</label
+              >
+              <select
+                id="natureza"
+                formControlName="natureza"
+                class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]"
+              >
+                <option value="ACC">ACC</option>
+                <option value="ACEX">ACEX</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#404945] mb-1" for="cargaHoraria"
+                >Carga Horária (h)</label
+              >
+              <input
+                id="cargaHoraria"
+                type="number"
+                min="1"
+                formControlName="cargaHoraria"
+                class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#404945] mb-1" for="descricao"
+              >Descrição / Observações</label
+            >
+            <textarea
+              id="descricao"
+              formControlName="descricao"
+              rows="3"
+              class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629] resize-none"
+            ></textarea>
+          </div>
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-[#003629] text-white text-xs font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors"
+            >
+              Salvar Edição
+            </button>
+          </div>
+        </form>
+      }
+
+      @if (erroSubstituicao()) {
+        <div
+          class="p-3 bg-[#ffdad6] text-[#93000a] rounded-lg border border-[#ba1a1a]/20 text-xs font-medium flex items-start gap-2 mb-4"
+        >
+          <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">error</span>
+          <span>{{ erroSubstituicao() }}</span>
         </div>
       }
 
-      @if (erroArquivo()) {
-        <div class="p-3 bg-[#ffdad6] text-[#93000a] rounded-lg border border-[#ba1a1a]/20 text-xs font-medium flex items-start gap-2">
-          <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">error</span>
-          <span>{{ erroArquivo() }}</span>
+      @if (bloqueado()) {
+        <div
+          class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 text-xs text-[#707974] flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-[#003629]">lock</span>
+          <span
+            >Esta atividade está homologada ou não possui pendências. A substituição está
+            bloqueada.</span
+          >
+        </div>
+      } @else {
+        <div class="space-y-4">
+          @if (!arquivo() && !bloqueado()) {
+            <div
+              class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-6 text-center text-sm text-[#707974] flex flex-col items-center gap-3"
+            >
+              <span class="material-symbols-outlined text-4xl text-[#c0c9c3]">history_edu</span>
+              <p>Nenhuma substituição de comprovante em andamento.</p>
+              <p class="text-xs">Selecione um arquivo para iniciar a revisão.</p>
+            </div>
+          }
+          <h3 class="text-sm font-semibold text-[#404945]">Comprovante Atual</h3>
+          <div
+            class="bg-[#fff8e1]/40 border border-[#ffe082] rounded-lg p-4 flex items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-2xl text-[#b78103]">task</span>
+              <div>
+                <p class="text-sm font-medium text-[#191c1d]">Certificado cadastrado</p>
+                <p class="text-xs text-[#707974]">Documento já registrado no sistema</p>
+              </div>
+            </div>
+            <span
+              class="text-xs font-semibold bg-[#c3ecd2] text-[#00522e] px-2.5 py-0.5 rounded-full"
+              >Atual</span
+            >
+          </div>
+
+          <h3 class="text-sm font-semibold text-[#404945] mt-4">Novo Comprovante</h3>
+          <p class="text-xs text-[#707974]">
+            Substitua o arquivo existente por um novo comprovante (PDF, PNG ou JPEG, até 5MB).
+          </p>
+
+          <label
+            class="cursor-pointer inline-flex items-center gap-2 px-4 py-3 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#1b4d3e] transition-colors shadow-sm"
+          >
+            <span class="material-symbols-outlined text-sm">upload_file</span>
+            <span>Enviar novo comprovante</span>
+            <input
+              type="file"
+              accept=".pdf,.png,.jpg,.jpeg"
+              (change)="onFileSelected($event)"
+              class="hidden"
+            />
+          </label>
+
+          @if (arquivo()) {
+            <div
+              class="bg-[#e6efe9] border border-[#003629]/20 rounded-lg p-3 flex items-center justify-between gap-3"
+            >
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="material-symbols-outlined text-[#00522e] shrink-0">attach_file</span>
+                <p class="text-sm font-medium text-[#191c1d] truncate">{{ arquivo()?.name }}</p>
+              </div>
+              <button
+                type="button"
+                (click)="removerArquivo()"
+                class="text-xs text-[#ba1a1a] hover:underline font-semibold shrink-0"
+              >
+                Remover
+              </button>
+            </div>
+          }
+
+          @if (
+            !arquivo() &&
+            dados()?.novoComprovante === null &&
+            dados()?.comprovanteRemovido === false
+          ) {
+            <div
+              class="bg-[#fff8e1] border border-[#ffe082] rounded-lg p-3 text-xs text-[#b78103] flex items-center gap-2 mt-2"
+            >
+              <span class="material-symbols-outlined text-sm shrink-0">check_circle</span>
+              <span>Comprovante removido com sucesso.</span>
+            </div>
+          }
+
+          @if (erroArquivo()) {
+            <div
+              class="p-3 bg-[#ffdad6] text-[#93000a] rounded-lg border border-[#ba1a1a]/20 text-xs font-medium flex items-start gap-2"
+            >
+              <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">error</span>
+              <span>{{ erroArquivo() }}</span>
+            </div>
+          }
         </div>
       }
-    </div>
-  }
-  </section>
+    </section>
   </main>
 </div>
