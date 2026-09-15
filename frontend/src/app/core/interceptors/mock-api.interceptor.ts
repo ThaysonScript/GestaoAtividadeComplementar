@@ -47,7 +47,8 @@ function processarRotasMock(
     handleRelatoriosMocks(req, url, method) ??
     handleNotificacoesMocks(req, url, method) ??
     handleRevisaoConfirmacaoMocks(req, url, method) ??
-    handleSubstituicaoMocks(req, url, method)
+    handleSubstituicaoMocks(req, url, method) ??
+    handleHistoricoPareceresMocks(req, url, method)
   );
 }
 
@@ -714,6 +715,18 @@ function handleRevisaoConfirmacaoMocks(
     });
   }
 
+  return null;
+}
+
+function handleHistoricoPareceresMocks(
+  req: HttpRequest<unknown>,
+  url: string,
+  method: string,
+): Observable<HttpResponse<unknown>> | null {
+  if (!url.includes('/historico-pareceres')) return null;
+  if (method === 'GET') {
+    return jsonResponse(200, []);
+  }
   return null;
 }
 
