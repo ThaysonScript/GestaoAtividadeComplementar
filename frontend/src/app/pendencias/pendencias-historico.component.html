@@ -86,6 +86,14 @@
               <div class="text-xs text-[#404945] shrink-0">
                 <p>Status atual:</p>
                 <p class="font-bold text-[#003629]">{{ atividade.statusAtual }}</p>
+                @if (atividade.pendenciasAtivas) {
+                  <a
+                    [routerLink]="['/substituicao-comprovante', atividade.atividadeId]"
+                    class="inline-block mt-2 px-3 py-1.5 bg-[#003629] text-white text-[11px] font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors"
+                  >
+                    Corrigir / Substituir comprovante
+                  </a>
+                }
               </div>
             </div>
 

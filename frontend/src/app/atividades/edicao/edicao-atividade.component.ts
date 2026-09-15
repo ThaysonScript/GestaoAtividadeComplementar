@@ -47,6 +47,11 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
   readonly dragOver = signal<boolean>(false);
 
   readonly atividadeOriginal = signal<Atividade | null>(null);
+  readonly bloqueado = computed(() => {
+    const atv = this.atividadeOriginal();
+    if (!atv) return false;
+    return !(atv.status === 'PENDENTE' || atv.status === 'COM_PENDENCIAS');
+  });
   readonly certificadoAtualRemovido = signal<boolean>(false);
 
   // Estados do Modal
@@ -258,6 +263,13 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    if (this.bloqueado()) {
+      this.mensagemErro.set(
+        'Esta atividade está homologada ou não possui pendências. A edição está bloqueada.',
+      );
+      return;
+    }
+
     if (this.isFormularioInvalido() || !this.atividadeId) {
       this.activityForm.markAllAsTouched();
       if (!this.temCertificadoValido()) {
