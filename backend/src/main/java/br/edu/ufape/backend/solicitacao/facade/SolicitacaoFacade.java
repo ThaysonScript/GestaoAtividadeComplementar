@@ -74,6 +74,10 @@ public class SolicitacaoFacade {
 		}).toList();
 	}
 
+	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status, String justificativa) {
+		return solicitacaoService.avaliarPorAtividade(solicitacaoId, atividadeId, status, justificativa);
+	}
+
 	public SolicitacaoAvaliadorDetalheResponseDTO detalharParaAvaliacao(Long solicitacaoId) {
 		SolicitacaoValidacao solicitacao = solicitacaoService.detalharParaAvaliacao(solicitacaoId);
 		Usuario usuario = usuarioContrato.buscarPorId(solicitacao.getEstudanteId()).orElse(null);

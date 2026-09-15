@@ -122,6 +122,21 @@ public class SolicitacaoService {
 		return solicitacaoValidacaoRepository.findByStatusOrderByDataSubmissaoDesc(status);
 	}
 
+	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status, String justificativa) {
+		SolicitacaoValidacao solicitacao = solicitacaoValidacaoRepository.findById(solicitacaoId)
+				.orElseThrow(() -> new SolicitacaoNaoEncontradaException(solicitacaoId));
+
+		solicitacao.getItens().stream()
+				.filter(i -> i.getAtividadeId().equals(atividadeId))
+				.findFirst()
+				.ifPresent(i -> {
+					i.setStatus(status);
+					i.setJustificativa(justificativa);
+				});
+
+		return solicitacaoValidacaoRepository.save(solicitacao);
+	}
+
 	@Transactional(readOnly = true)
 	public SolicitacaoValidacao detalharParaAvaliacao(Long solicitacaoId) {
 		return solicitacaoValidacaoRepository.findByIdComItens(solicitacaoId)

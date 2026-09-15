@@ -704,8 +704,10 @@ function handleRevisaoConfirmacaoMocks(
   if (url.endsWith('/revisao-confirmacao') && method === 'PATCH') {
     const bodyObj = extrairDadosCorpo(req);
     const confirmado = (bodyObj['confirmado'] as boolean) ?? true;
+    const solicitacaoId = bodyObj['solicitacaoId'] ?? 1;
     return jsonResponse(200, {
       ...REVISAO_CONFIRMACAO_MOCK,
+      solicitacaoId,
       statusNovo: 'SUBMETIDA',
       bloqueado: true,
       confirmado,

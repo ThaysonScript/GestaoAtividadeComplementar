@@ -8,17 +8,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ufape.backend.historico.dto.AtividadeComHistoricoParecerDTO;
+import br.edu.ufape.backend.historico.dto.ParecerAvaliadorHistoricoDTO;
+import br.edu.ufape.backend.historico.facade.HistoricoParecerFacade;
+
 @RestController
 @RequestMapping("/api/v1/historico-pareceres")
 public class HistoricoParecerController {
 
+    private final HistoricoParecerFacade facade;
+
+    public HistoricoParecerController(HistoricoParecerFacade facade) {
+        this.facade = facade;
+    }
+
     @GetMapping
-    public ResponseEntity<List<Object>> listar() {
-        return ResponseEntity.ok(List.of());
+    public ResponseEntity<List<AtividadeComHistoricoParecerDTO>> listar() {
+        return ResponseEntity.ok(facade.listarPorEstudante());
     }
 
     @GetMapping("/atividade/{id}")
-    public ResponseEntity<List<Object>> buscarPorAtividade(@PathVariable Long id) {
-        return ResponseEntity.ok(List.of());
+    public ResponseEntity<List<ParecerAvaliadorHistoricoDTO>> buscarPorAtividade(@PathVariable Long id) {
+        return ResponseEntity.ok(facade.buscarPorAtividade(id));
     }
 }
