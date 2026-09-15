@@ -8,6 +8,7 @@ import { SuccessToastComponent } from '../../core/components/success-toast/succe
 import { FileDropzoneComponent } from '../../core/components/file-dropzone/file-dropzone.component';
 
 import { AtividadeService } from '../atividade.service';
+import { SolicitacaoService } from '../../solicitacao/solicitacao.service';
 import { AtividadeEdicaoRequest } from './edicao-atividade.model';
 import { Atividade } from '../atividade.model';
 
@@ -33,6 +34,7 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly atividadeService = inject(AtividadeService);
+  private readonly solicitacaoService = inject(SolicitacaoService);
 
   atividadeId: number | null = null;
   readonly carregandoDados = signal<boolean>(true);
@@ -47,11 +49,7 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
   readonly dragOver = signal<boolean>(false);
 
   readonly atividadeOriginal = signal<Atividade | null>(null);
-  readonly bloqueado = computed(() => {
-    const atv = this.atividadeOriginal();
-    if (!atv) return false;
-    return !(atv.status === 'PENDENTE' || atv.status === 'COM_PENDENCIAS');
-  });
+  readonly bloqueado = signal<boolean>(false);
   readonly certificadoAtualRemovido = signal<boolean>(false);
 
   // Estados do Modal
@@ -109,15 +107,50 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
           cargaHoraria: atividade.cargaHorariaEmHoras,
         });
         this.carregandoDados.set(false);
+        this.atualizarEstadoBloqueio();
+      },
+      error: (erro: Error) => {
+        this.mensagemErro.set(erro.message);
+        this.atualizarEstadoBloqueio();
+        this.carregandoDados.set(false);
+      },
+    });
+  }
+
+  private atualizarEstadoBloqueio(): void {
+    if (!this.atividadeId) {
+      const atvStatus = this.atividadeOriginal()?.status ?? 'PENDENTE';
+      this.bloqueado.set(!(atvStatus === 'PENDENTE' || atvStatus === 'COM_PENDENCIAS'));
+      if (this.bloqueado()) {
+        this.activityForm.disable();
+      } else {
+        this.activityForm.enable();
+      }
+      return;
+    }
+    this.solicitacaoService.verificarEmAbertoComAtividade(this.atividadeId).subscribe({
+      next: (emAberto) => {
+        const atvStatus = this.atividadeOriginal()?.status ?? 'PENDENTE';
+        if (emAberto) {
+          this.bloqueado.set(true);
+          this.activityForm.disable();
+        } else {
+          this.bloqueado.set(!(atvStatus === 'PENDENTE' || atvStatus === 'COM_PENDENCIAS'));
+          if (this.bloqueado()) {
+            this.activityForm.disable();
+          } else {
+            this.activityForm.enable();
+          }
+        }
+      },
+      error: () => {
+        const atvStatus = this.atividadeOriginal()?.status ?? 'PENDENTE';
+        this.bloqueado.set(!(atvStatus === 'PENDENTE' || atvStatus === 'COM_PENDENCIAS'));
         if (this.bloqueado()) {
           this.activityForm.disable();
         } else {
           this.activityForm.enable();
         }
-      },
-      error: (erro: Error) => {
-        this.mensagemErro.set(erro.message);
-        this.carregandoDados.set(false);
       },
     });
   }
