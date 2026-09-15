@@ -1,5 +1,5 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GestaoUsuariosComponent } from './gestao-usuarios.component';
 import { AdminService } from '../admin.service';
@@ -82,5 +82,43 @@ describe('GestaoUsuariosComponent', () => {
     component.formUsuario.reset();
     component.salvarUsuario();
     expect(adminServiceSpy.cadastrarUsuarioInstitucional).not.toHaveBeenCalled();
+  });
+
+  it('deve abrir e fechar modal', () => {
+    component.abrirModal();
+    expect(component.modalAberto()).toBe(true);
+    component.fecharModal();
+    expect(component.modalAberto()).toBe(false);
+  });
+
+  it('deve alternar status com erro', () => {
+    adminServiceSpy.alternarStatusUsuario.mockReturnValue(throwError(() => new Error('Erro')));
+    component.alternarStatus(usuariosMock[0]);
+    expect(component.mensagemErro()).toBe('Erro');
+  });
+
+  it('deve tratar erro ao carregar usuarios', () => {
+    adminServiceSpy.listarUsuarios.mockReturnValue(throwError(() => new Error('Falha')));
+    component.carregarUsuarios();
+    expect(component.mensagemErro()).toBe('Falha');
+  });
+
+  it('deve tratar erro ao cadastrar usuario', () => {
+    adminServiceSpy.cadastrarUsuarioInstitucional.mockReturnValue(
+      throwError(() => new Error('Cadastro falhou')),
+    );
+    component.formUsuario.setValue({
+      nome: 'Novo Usuario',
+      email: 'novo@ufape.edu.br',
+      senha: 'senha1234',
+      role: 'AVALIADOR',
+      registro: '',
+      areaAtuacao: '',
+      setor: '',
+      nivelAcesso: 'TOTAL',
+    });
+    component.salvarUsuario();
+    expect(component.mensagemErro()).toBe('Cadastro falhou');
+    expect(component.salvando()).toBe(false);
   });
 });
