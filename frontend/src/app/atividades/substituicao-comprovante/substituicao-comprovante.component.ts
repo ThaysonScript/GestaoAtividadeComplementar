@@ -33,9 +33,11 @@ export class SubstituicaoComprovanteComponent implements OnInit {
           this.dados.set({
             atividadeId: atividade.id,
             titulo: atividade.titulo,
-            statusAtual: atividade.status,
-            pendenciasAtivas: atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS',
-            pareceres: [],
+            comprovanteRemovido: false,
+            novoComprovante: null,
+            validacaoTamanho: true,
+            validacaoTipo: true,
+            bloqueado: false,
           });
         },
         error: () => {},
