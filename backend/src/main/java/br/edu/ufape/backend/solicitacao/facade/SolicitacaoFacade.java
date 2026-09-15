@@ -39,7 +39,7 @@ public class SolicitacaoFacade {
 	}
 
 	public SolicitacaoResponseDTO anexarAtividade(String emailEstudante, Long solicitacaoId, Long atividadeId) {
-		Usuario usuario = obterEstudante(emailEstudante);
+		obterEstudante(emailEstudante);
 		SolicitacaoValidacao resultado = solicitacaoService.anexarAtividade(solicitacaoId, atividadeId);
 		return new SolicitacaoResponseDTO(resultado);
 	}
@@ -80,8 +80,13 @@ public class SolicitacaoFacade {
 		}).toList();
 	}
 
-	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status, String justificativa) {
+	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status,
+			String justificativa) {
 		return solicitacaoService.avaliarPorAtividade(solicitacaoId, atividadeId, status, justificativa);
+	}
+
+	public boolean existeSolicitacaoEmAbertoComAtividade(Long atividadeId) {
+		return solicitacaoService.existeSolicitacaoEmAbertoComAtividade(atividadeId);
 	}
 
 	public SolicitacaoAvaliadorDetalheResponseDTO detalharParaAvaliacao(Long solicitacaoId) {
