@@ -33,8 +33,10 @@ public class RelatorioService {
 	public RelatorioAtividadesResponse gerarRelatorio(String emailEstudante) {
 		List<AtividadeResponseDTO> atividades = atividadeContrato.buscarPorEstudante(emailEstudante);
 
-		Map<String, List<AtividadeResponseDTO>> porNatureza = atividades.stream().collect(Collectors
-				.groupingBy(atividade -> atividade.natureza().name(), LinkedHashMap::new, Collectors.toList()));
+		Map<String, List<AtividadeResponseDTO>> porNatureza = atividades.stream()
+				.collect(Collectors.groupingBy(atividade -> atividade.natureza().name(), LinkedHashMap::new,
+						Collectors.collectingAndThen(Collectors.toList(),
+								a -> java.util.Collections.unmodifiableList(new ArrayList<>(a)))));
 
 		List<GrupoNaturezaResponse> grupos = new ArrayList<>();
 		for (String natureza : ORDEM_NATUREZA) {
@@ -55,7 +57,8 @@ public class RelatorioService {
 	private List<GrupoCategoriaResponse> agruparPorCategoria(List<AtividadeResponseDTO> atividades) {
 		return atividades.stream()
 				.collect(Collectors.groupingBy(atividade -> atividade.categoria().name(), LinkedHashMap::new,
-						Collectors.toList()))
+						Collectors.collectingAndThen(Collectors.toList(),
+								a -> java.util.Collections.unmodifiableList(new ArrayList<>(a)))))
 				.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.map(entrada -> new GrupoCategoriaResponse(entrada.getKey(), somarHoras(entrada.getValue()),
 						entrada.getValue().stream().map(this::paraItem).toList()))
