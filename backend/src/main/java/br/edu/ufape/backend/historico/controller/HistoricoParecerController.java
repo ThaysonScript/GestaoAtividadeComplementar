@@ -16,19 +16,19 @@ import br.edu.ufape.backend.historico.facade.HistoricoParecerFacade;
 @RequestMapping("/api/v1/historico-pareceres")
 public class HistoricoParecerController {
 
-    private final HistoricoParecerFacade facade;
+	private final HistoricoParecerFacade facade;
 
-    public HistoricoParecerController(HistoricoParecerFacade facade) {
-        this.facade = facade;
-    }
+	public HistoricoParecerController(HistoricoParecerFacade facade) {
+		this.facade = facade;
+	}
 
-    @GetMapping
-    public ResponseEntity<List<AtividadeComHistoricoParecerDTO>> listar() {
-        return ResponseEntity.ok(facade.listarPorEstudante());
-    }
+	@GetMapping
+	public ResponseEntity<List<AtividadeComHistoricoParecerDTO>> listar() {
+		return ResponseEntity.ok(facade.listarPorEstudante());
+	}
 
-    @GetMapping("/atividade/{id}")
-    public ResponseEntity<List<ParecerAvaliadorHistoricoDTO>> buscarPorAtividade(@PathVariable Long id) {
-        return ResponseEntity.ok(facade.buscarPorAtividade(id));
-    }
+	@GetMapping("/atividade/{id}")
+	public ResponseEntity<List<ParecerAvaliadorHistoricoDTO>> buscarPorAtividade(@PathVariable Long id) {
+		return ResponseEntity.ok(facade.buscarPorAtividade(id));
+	}
 }
