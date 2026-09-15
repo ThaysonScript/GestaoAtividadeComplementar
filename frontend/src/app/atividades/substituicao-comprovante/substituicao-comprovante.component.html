@@ -17,6 +17,32 @@
         <p class="text-xs text-[#707974] mt-1">{{ atividadeTitulo() }} (#{{ atividadeId() }})</p>
       </div>
 
+  @if (!bloqueado()) {
+    <form [formGroup]="edicaoForm" (ngSubmit)="salvarEdicao()" class="space-y-4 bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4">
+      <h3 class="text-sm font-semibold text-[#404945]">Editar Dados da Atividade</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#404945] mb-1" for="natureza">Natureza</label>
+          <select id="natureza" formControlName="natureza" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]">
+            <option value="ACC">ACC</option>
+            <option value="ACEX">ACEX</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#404945] mb-1" for="cargaHoraria">Carga Horária (h)</label>
+          <input id="cargaHoraria" type="number" min="1" formControlName="cargaHoraria" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629]" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-[#404945] mb-1" for="descricao">Descrição / Observações</label>
+        <textarea id="descricao" formControlName="descricao" rows="3" class="w-full bg-white border border-[#c0c9c3] rounded-lg px-3 py-2 text-sm text-[#191c1d] focus:outline-none focus:border-[#003629] resize-none"></textarea>
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="px-4 py-2 bg-[#003629] text-white text-xs font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors">Salvar Edição</button>
+      </div>
+    </form>
+  }
+
   @if (bloqueado()) {
     <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 text-xs text-[#707974] flex items-center gap-2">
       <span class="material-symbols-outlined text-[#003629]">lock</span>

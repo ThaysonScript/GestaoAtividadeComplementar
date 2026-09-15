@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
 import { SubstituicaoService } from '../../solicitacao/substituicao.service';
 import { AtividadeService } from '../atividade.service';
@@ -8,13 +9,14 @@ import { AtividadeService } from '../atividade.service';
 @Component({
   selector: 'app-substituicao-comprovante',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './substituicao-comprovante.component.html',
 })
 export class SubstituicaoComprovanteComponent implements OnInit {
   private readonly atividadeService = inject(AtividadeService);
   private readonly substituicaoService = inject(SubstituicaoService);
   private readonly route = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder);
   readonly dados = signal<DadosSubstituicaoComprovante | null>(null);
   readonly substituindo = signal(false);
   readonly atividadeId = signal<number | null>(null);
@@ -25,8 +27,13 @@ export class SubstituicaoComprovanteComponent implements OnInit {
   readonly bloqueado = computed(() => {
     const id = this.atividadeId();
     if (!id) return true;
-    // Se nao tem dados carregados ainda, considera bloqueado por seguranca
     return false;
+  });
+
+  edicaoForm = this.fb.group({
+    natureza: ['', [Validators.required]],
+    cargaHoraria: ['', [Validators.required, Validators.min(1)]],
+    descricao: [''],
   });
 
   ngOnInit(): void {
@@ -46,6 +53,11 @@ export class SubstituicaoComprovanteComponent implements OnInit {
             validacaoTamanho: true,
             validacaoTipo: true,
             bloqueado: !(atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS'),
+          });
+          this.edicaoForm.patchValue({
+            natureza: atividade.natureza ?? '',
+            cargaHoraria: atividade.cargaHorariaEmHoras ?? 0,
+            descricao: atividade.titulo ?? '',
           });
           this.carregando.set(false);
         },
@@ -92,6 +104,19 @@ export class SubstituicaoComprovanteComponent implements OnInit {
       },
     });
     return true;
+  }
+
+  salvarEdicao(): void {
+    if (this.edicaoForm.invalid) {
+      this.edicaoForm.markAllAsTouched();
+      return;
+    }
+    // Simula a edicao; no futuro seria integrado ao backend
+    this.dados.set({
+      ...this.dados() ?? { atividadeId: 0, titulo: '', comprovanteRemovido: false, novoComprovante: null, validacaoTamanho: true, validacaoTipo: true, bloqueado: false },
+      comprovanteRemovido: false,
+      bloqueado: true,
+    });
   }
 
   removerArquivo(): void {
