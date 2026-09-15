@@ -78,7 +78,7 @@ export class SubstituicaoComprovanteComponent implements OnInit {
     const url = `/api/v1/solicitacoes/${solicitacaoId}`;
     this.http.get<any>(url).subscribe({
       next: (res) => {
-        if (res && res.status === 'COM_PENDENCIAS') {
+        if (res?.status === 'COM_PENDENCIAS') {
           const d = this.dados();
           if (d) {
             this.dados.set({ ...d, bloqueado: true });
