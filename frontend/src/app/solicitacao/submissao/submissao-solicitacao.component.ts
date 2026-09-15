@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SolicitacaoDetalhe } from '../solicitacao.model';
@@ -11,7 +11,7 @@ import { rotuloStatus } from '../status-solicitacao';
   imports: [CommonModule, RouterLink],
   templateUrl: './submissao-solicitacao.component.html',
 })
-export class SubmissaoSolicitacaoComponent {
+export class SubmissaoSolicitacaoComponent implements OnInit {
   private readonly solicitacaoService = inject(SolicitacaoService);
 
   @Input() atividadeId?: number;
