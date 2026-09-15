@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,6 +45,17 @@ public class SolicitacaoEstudanteController {
 		String emailEstudante = authentication.getName();
 		List<SolicitacaoResumoResponseDTO> response = solicitacaoFacade.listarDoEstudante(emailEstudante);
 		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/{solicitacaoId}/atividades")
+	public ResponseEntity<SolicitacaoResponseDTO> anexarAtividade(@PathVariable Long solicitacaoId,
+			@RequestBody(required = false) Long atividadeId, Authentication authentication) {
+		if (authentication == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		String emailEstudante = authentication.getName();
+		SolicitacaoResponseDTO response = solicitacaoFacade.anexarAtividade(emailEstudante, solicitacaoId, atividadeId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping("/{id}")

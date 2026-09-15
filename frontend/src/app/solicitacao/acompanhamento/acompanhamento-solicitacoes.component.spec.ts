@@ -69,7 +69,7 @@ describe('AcompanhamentoSolicitacoesComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(
       'Você ainda não submeteu nenhuma solicitação',
     );
-    const atalho = fixture.nativeElement.querySelector('a[href="/relatorio"]');
+    const atalho = fixture.nativeElement.querySelector('a[href="/solicitacoes/enviar"]');
     expect(atalho).toBeTruthy();
   });
 

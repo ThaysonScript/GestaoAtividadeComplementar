@@ -109,6 +109,11 @@ export class EdicaoAtividadeComponent implements OnInit, OnDestroy {
           cargaHoraria: atividade.cargaHorariaEmHoras,
         });
         this.carregandoDados.set(false);
+        if (this.bloqueado()) {
+          this.activityForm.disable();
+        } else {
+          this.activityForm.enable();
+        }
       },
       error: (erro: Error) => {
         this.mensagemErro.set(erro.message);

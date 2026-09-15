@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { SolicitacaoDetalhe, StatusSolicitacao } from '../solicitacao.model';
 import { classeStatus, rotuloStatus } from '../status-solicitacao';
 import { dataFormatada } from '../solicitacao.helpers';
@@ -9,7 +10,7 @@ const STATUS_COM_JUSTIFICATIVA = new Set<StatusSolicitacao>(['REJEITADA', 'COM_P
 @Component({
   selector: 'app-detalhe-solicitacao',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './detalhe-solicitacao.component.html',
 })
 export class DetalheSolicitacaoComponent {

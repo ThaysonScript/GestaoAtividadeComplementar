@@ -1,9 +1,21 @@
 package br.edu.ufape.backend.revisao.dto;
 
+import java.util.List;
+
 public record DadosRevisaoReenvioDTO(
     Long solicitacaoId,
+    List<ItemCorrigidoDTO> itensCorrigidos,
+    List<String> novosComprovantes,
+    String observacoesAvaliador,
+    String statusAnterior,
     String statusNovo,
     Boolean bloqueado,
-    Boolean confirmado,
-    String statusAnterior
-) {}
+    Boolean confirmado
+) {
+    public record ItemCorrigidoDTO(
+        Long atividadeId,
+        String titulo,
+        String natureza,
+        Integer cargaHoraria
+    ) {}
+}

@@ -1,6 +1,7 @@
 package br.edu.ufape.backend.atividade.facade;
 
 import java.util.List;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import br.edu.ufape.backend.atividade.dto.AtividadeResponseDTO;
@@ -66,6 +67,10 @@ public class AtividadeFacade {
 
 	public Double calcularTempoMedioMs() {
 		return auditoriaService.calcularTempoMedioMs();
+	}
+
+	public AtividadeResponseDTO buscarPorId(Long id) {
+		return new AtividadeResponseDTO(atividadeComplementarService.buscarPorId(id));
 	}
 
 	public ParecerResponseDTO avaliarAtividade(Long atividadeId, AvaliacaoDecisaoRequestDTO request) {

@@ -10,6 +10,8 @@ export interface SolicitacaoItem {
   titulo: string;
   cargaHoraria: number;
   natureza: string;
+  status?: StatusSolicitacao;
+  justificativa?: string;
 }
 
 export interface SolicitacaoResumo {

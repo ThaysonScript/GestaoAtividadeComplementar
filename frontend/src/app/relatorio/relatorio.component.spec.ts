@@ -101,7 +101,8 @@ describe('RelatorioComponent', () => {
     const fixture = montar({ obterRelatorio: () => of(relatorioComDados) });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('app-submissao-solicitacao')).toBeTruthy();
+    const botaoImprimir = fixture.nativeElement.querySelector('button');
+    expect(botaoImprimir).toBeTruthy();
   });
 
   it('nao exibe a acao de enviar para validacao no empty state', () => {

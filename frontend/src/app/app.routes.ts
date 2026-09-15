@@ -80,6 +80,22 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
   },
   {
+    path: 'solicitacoes/enviar',
+    loadComponent: () =>
+      import('./solicitacao/envio/envio-solicitacao.component').then(
+        (m) => m.EnvioSolicitacaoComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
+  },
+  {
+    path: 'solicitacoes/submissao',
+    loadComponent: () =>
+      import('./solicitacao/submissao/submissao-solicitacao.component').then(
+        (m) => m.SubmissaoSolicitacaoComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
+  },
+  {
     path: 'solicitacoes',
     loadComponent: () =>
       import('./solicitacao/acompanhamento/acompanhamento-solicitacoes.component').then(
@@ -126,7 +142,7 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['AVALIADOR', 'ADMINISTRADOR'])],
   },
   {
-    path: 'substituicao-comprovante/:id',
+    path: 'substituicao-comprovante/:solicitacaoId/:id',
     loadComponent: () =>
       import('./atividades/substituicao-comprovante/substituicao-comprovante.component').then(
         (m) => m.SubstituicaoComprovanteComponent,
@@ -140,6 +156,22 @@ export const routes: Routes = [
         (m) => m.RevisaoConfirmacaoComponent,
       ),
     canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
+  },
+  {
+    path: 'revisao-confirmacao/:solicitacaoId',
+    loadComponent: () =>
+      import('./solicitacao/revisao-confirmacao/revisao-confirmacao.component').then(
+        (m) => m.RevisaoConfirmacaoComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['ESTUDANTE'])],
+  },
+  {
+    path: 'avaliacao/atividade/:id',
+    loadComponent: () =>
+      import('./avaliacao/avalia-atividade/avaliacao-atividade/avaliacao-atividade.component').then(
+        (m) => m.AvaliacaoAtividadeComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['AVALIADOR', 'ADMINISTRADOR'])],
   },
   {
     path: 'pendencias',

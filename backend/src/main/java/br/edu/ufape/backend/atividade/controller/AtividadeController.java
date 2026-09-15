@@ -90,6 +90,15 @@ public class AtividadeController {
 		return ResponseEntity.badRequest().body(Map.of("message", mensagem));
 	}
 
+	@GetMapping("/{id:[0-9]+}")
+	public ResponseEntity<AtividadeResponseDTO> buscarPorId(@PathVariable Long id, Authentication authentication) {
+		if (authentication == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		AtividadeResponseDTO response = atividadeFacade.buscarPorId(id);
+		return ResponseEntity.ok(response);
+	}
+
 	@PostMapping("/{id}/avaliar")
 	public ResponseEntity<br.edu.ufape.backend.ia.dto.ParecerResponseDTO> avaliar(@PathVariable Long id,
 			@Valid @RequestBody br.edu.ufape.backend.atividade.dto.AvaliacaoDecisaoRequestDTO request) {

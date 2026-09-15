@@ -1,6 +1,8 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   DecisaoAvaliacao,
   SolicitacaoDetalheAvaliacao,
@@ -8,16 +10,18 @@ import {
 } from '../avaliacao.model';
 import { AvaliacaoService } from '../avaliacao.service';
 import { classeStatus, rotuloStatus } from '../../solicitacao/status-solicitacao';
+import { StatusSolicitacao } from '../../solicitacao/solicitacao.model';
 import { dataFormatada } from '../../solicitacao/solicitacao.helpers';
 
 @Component({
   selector: 'app-fila-solicitacoes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './fila-solicitacoes.component.html',
 })
-export class FilaSolicitacoesComponent implements OnInit {
+export class FilaSolicitacoesComponent implements OnInit, OnDestroy {
   private readonly avaliacaoService = inject(AvaliacaoService);
+  private readonly subscription = new Subscription();
 
   readonly carregando = signal(true);
   readonly mensagemErro = signal<string | null>(null);
@@ -39,6 +43,9 @@ export class FilaSolicitacoesComponent implements OnInit {
   readonly enviandoDecisao = signal(false);
   readonly erroDecisao = signal<string | null>(null);
 
+  readonly filtroStatus = signal<StatusSolicitacao | ''>('');
+  readonly filtroItens = signal<StatusSolicitacao | ''>('');
+
   readonly isJustificativaObrigatoria = computed(
     () =>
       this.decisaoSelecionada() === 'REJEITADA' || this.decisaoSelecionada() === 'COM_PENDENCIAS',
@@ -54,15 +61,61 @@ export class FilaSolicitacoesComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarFila();
+    this.subscription.add(
+      this.avaliacaoService.onAvaliacaoRealizada.subscribe(() => {
+        this.carregarFila();
+      }),
+    );
   }
 
-  carregarFila(): void {
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  carregarFila(status?: StatusSolicitacao): void {
+    this.filtroStatus.set((status as StatusSolicitacao | '') ?? '');
+    this.solicitacaoExpandidaId.set(null);
+    this.detalheExpandido.set(null);
     this.carregando.set(true);
     this.mensagemErro.set(null);
-    this.avaliacaoService.listarPendentes().subscribe({
+    this.avaliacaoService.consultar(status).subscribe({
       next: (lista) => {
-        this.solicitacoes.set(lista);
-        this.carregando.set(false);
+        // Filtra solicitaões onde todas as atividades estão aprovadas
+        const idsParaVerificar = lista.map((s) => s.id);
+        if (idsParaVerificar.length === 0) {
+          this.solicitacoes.set([]);
+          this.carregando.set(false);
+          return;
+        }
+        let verificados = 0;
+        const solicitacoesFiltradas: SolicitacaoFilaItem[] = [];
+        idsParaVerificar.forEach((id) => {
+          this.avaliacaoService.detalhar(id).subscribe({
+            next: (detalhe) => {
+              verificados++;
+              const todasAprovadas =
+                detalhe.itens.length > 0 &&
+                detalhe.itens.every((i) => (i.status ?? detalhe.status) === 'APROVADA');
+              if (!todasAprovadas) {
+                const solicitacao = lista.find((s) => s.id === id);
+                if (solicitacao) solicitacoesFiltradas.push(solicitacao);
+              }
+              if (verificados === idsParaVerificar.length) {
+                this.solicitacoes.set(solicitacoesFiltradas);
+                this.carregando.set(false);
+              }
+            },
+            error: () => {
+              verificados++;
+              const solicitacao = lista.find((s) => s.id === id);
+              if (solicitacao) solicitacoesFiltradas.push(solicitacao);
+              if (verificados === idsParaVerificar.length) {
+                this.solicitacoes.set(solicitacoesFiltradas);
+                this.carregando.set(false);
+              }
+            },
+          });
+        });
       },
       error: (erro: Error) => {
         this.mensagemErro.set(erro.message);
@@ -153,4 +206,14 @@ export class FilaSolicitacoesComponent implements OnInit {
   readonly rotuloStatus = rotuloStatus;
   readonly classeStatus = classeStatus;
   readonly dataFormatada = dataFormatada;
+
+  filtraItemPorStatus(
+    item: { status?: string; atividadeId: number },
+    solicitacaoStatus: string,
+  ): boolean {
+    const filtro = this.filtroItens();
+    if (!filtro) return true;
+    const statusItem = item.status ?? solicitacaoStatus ?? '';
+    return statusItem === filtro;
+  }
 }

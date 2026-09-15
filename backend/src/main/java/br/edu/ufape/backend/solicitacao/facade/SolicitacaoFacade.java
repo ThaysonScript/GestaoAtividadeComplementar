@@ -38,6 +38,12 @@ public class SolicitacaoFacade {
 		return new SolicitacaoResponseDTO(solicitacao);
 	}
 
+	public SolicitacaoResponseDTO anexarAtividade(String emailEstudante, Long solicitacaoId, Long atividadeId) {
+		Usuario usuario = obterEstudante(emailEstudante);
+		SolicitacaoValidacao resultado = solicitacaoService.anexarAtividade(solicitacaoId, atividadeId);
+		return new SolicitacaoResponseDTO(resultado);
+	}
+
 	public SolicitacaoResponseDTO submeter(Long estudanteId) {
 		SolicitacaoValidacao solicitacao = solicitacaoService.submeter(estudanteId);
 		return new SolicitacaoResponseDTO(solicitacao);

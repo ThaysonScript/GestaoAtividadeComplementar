@@ -48,8 +48,42 @@ export class ConsultaSolicitacoesComponent implements OnInit {
     const status = this.filtroStatus() || undefined;
     this.avaliacaoService.consultar(status).subscribe({
       next: (solicitacoes) => {
-        this.solicitacoes.set(solicitacoes);
-        this.carregando.set(false);
+        const idsParaVerificar = solicitacoes.map((s) => s.id);
+        if (idsParaVerificar.length === 0) {
+          this.solicitacoes.set([]);
+          this.carregando.set(false);
+          return;
+        }
+        let verificados = 0;
+        const solicitacoesAtualizadas = [...solicitacoes];
+        idsParaVerificar.forEach((id) => {
+          this.avaliacaoService.detalhar(id).subscribe({
+            next: (detalhe) => {
+              verificados++;
+              const todasAprovadas =
+                detalhe.itens.length > 0 &&
+                detalhe.itens.every((i) => (i.status ?? detalhe.status) === 'APROVADA');
+              const index = solicitacoesAtualizadas.findIndex((s) => s.id === id);
+              if (index >= 0 && todasAprovadas) {
+                solicitacoesAtualizadas[index] = {
+                  ...solicitacoesAtualizadas[index],
+                  status: 'APROVADA',
+                };
+              }
+              if (verificados === idsParaVerificar.length) {
+                this.solicitacoes.set(solicitacoesAtualizadas);
+                this.carregando.set(false);
+              }
+            },
+            error: () => {
+              verificados++;
+              if (verificados === idsParaVerificar.length) {
+                this.solicitacoes.set(solicitacoesAtualizadas);
+                this.carregando.set(false);
+              }
+            },
+          });
+        });
       },
       error: (erro: Error) => {
         this.mensagemErro.set(erro.message);

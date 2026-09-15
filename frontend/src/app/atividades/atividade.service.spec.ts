@@ -35,8 +35,8 @@ describe('AtividadeService', () => {
     let atividadeEncontrada: any;
     service.buscarPorId(1).subscribe((res: any) => (atividadeEncontrada = res));
 
-    const reqs = httpMock.match(ATIVIDADES_URL);
-    reqs.forEach((req) => req.flush([{ id: 1, titulo: 'Atividade 1' }]));
+    const req = httpMock.expectOne(`${ATIVIDADES_URL}/1`);
+    req.flush({ id: 1, titulo: 'Atividade 1' });
 
     expect(atividadeEncontrada?.id).toBe(1);
   });
@@ -45,8 +45,8 @@ describe('AtividadeService', () => {
     let erro: Error | undefined;
     service.buscarPorId(999).subscribe({ error: (e: Error) => (erro = e) });
 
-    const reqs = httpMock.match(ATIVIDADES_URL);
-    reqs.forEach((req) => req.flush([{ id: 1, titulo: 'Atividade 1' }]));
+    const req = httpMock.expectOne(`${ATIVIDADES_URL}/999`);
+    req.flush(null, { status: 404, statusText: 'Not Found' });
 
     expect(erro?.message).toBe('Atividade não encontrada.');
   });

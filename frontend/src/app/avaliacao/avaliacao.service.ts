@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { API_BASE_URL } from '../api.config';
 import { mensagemDoBackend, traduzirErroComum } from '../core/interceptors/erro-util';
@@ -18,6 +18,9 @@ import {
 export class AvaliacaoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${API_BASE_URL}/solicitacoes`;
+  private readonly avaliacaoRealizada = new BehaviorSubject<void>(undefined);
+
+  readonly onAvaliacaoRealizada = this.avaliacaoRealizada.asObservable();
 
   consultar(status?: StatusSolicitacao): Observable<SolicitacaoAvaliadorResumo[]> {
     const params = status ? new HttpParams().set('status', status) : new HttpParams();
@@ -43,6 +46,33 @@ export class AvaliacaoService {
       );
   }
 
+  avaliarPorAtividade(
+    solicitacaoId: number,
+    atividadeId: number,
+    decisao: DecisaoAvaliacao,
+    justificativa?: string,
+  ): Observable<SolicitacaoAvaliadorDetalhe> {
+    const payload: AvaliacaoRequest = {
+      decisao,
+      justificativa: justificativa?.trim() || undefined,
+    };
+
+    return this.http
+      .patch<SolicitacaoAvaliadorDetalhe>(
+        `${this.apiUrl}/${solicitacaoId}/atividades/${atividadeId}/avaliacao`,
+        payload,
+      )
+      .pipe(
+        map((res) => {
+          this.avaliacaoRealizada.next();
+          return res;
+        }),
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => new Error(this.traduzirErroAvaliacao(error))),
+        ),
+      );
+  }
+
   avaliar(
     id: number,
     decisao: DecisaoAvaliacao,
@@ -56,6 +86,10 @@ export class AvaliacaoService {
     return this.http
       .patch<SolicitacaoAvaliadorDetalhe>(`${this.apiUrl}/${id}/avaliacao`, payload)
       .pipe(
+        map((res) => {
+          this.avaliacaoRealizada.next();
+          return res;
+        }),
         catchError((error: HttpErrorResponse) =>
           throwError(() => new Error(this.traduzirErroAvaliacao(error))),
         ),

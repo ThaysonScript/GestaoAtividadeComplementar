@@ -13,9 +13,10 @@ export class SolicitacaoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${API_BASE_URL}/solicitacoes`;
 
-  submeter(): Observable<SolicitacaoDetalhe> {
+  submeter(solicitacaoId?: number, atividadeId?: number): Observable<SolicitacaoDetalhe> {
+    const url = solicitacaoId ? `${this.apiUrl}/${solicitacaoId}/atividades` : this.apiUrl;
     return this.http
-      .post<SolicitacaoDetalhe>(this.apiUrl, {})
+      .post<SolicitacaoDetalhe>(url, solicitacaoId ? (atividadeId ?? null) : undefined)
       .pipe(
         catchError((error: HttpErrorResponse) =>
           throwError(() => new Error(this.traduzirErroSubmissao(error))),

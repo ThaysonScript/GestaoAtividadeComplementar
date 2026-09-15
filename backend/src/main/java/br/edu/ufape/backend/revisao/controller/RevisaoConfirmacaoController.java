@@ -3,10 +3,13 @@ package br.edu.ufape.backend.revisao.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ufape.backend.revisao.dto.ConfirmacaoReenvioRequestDTO;
 import br.edu.ufape.backend.revisao.dto.DadosRevisaoReenvioDTO;
 import br.edu.ufape.backend.revisao.facade.RevisaoConfirmacaoFacade;
 
@@ -21,12 +24,12 @@ public class RevisaoConfirmacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<DadosRevisaoReenvioDTO> listar() {
-        return ResponseEntity.ok(facade.listar(1L));
+    public ResponseEntity<DadosRevisaoReenvioDTO> listar(@RequestParam(required = false) Long solicitacaoId) {
+        return ResponseEntity.ok(facade.listar(solicitacaoId != null ? solicitacaoId : 1L));
     }
 
     @PatchMapping
-    public ResponseEntity<DadosRevisaoReenvioDTO> confirmar(@RequestBody Long solicitacaoId) {
-        return ResponseEntity.ok(facade.confirmar(solicitacaoId));
+    public ResponseEntity<DadosRevisaoReenvioDTO> confirmar(@RequestBody ConfirmacaoReenvioRequestDTO request) {
+        return ResponseEntity.ok(facade.confirmar(request.solicitacaoId()));
     }
 }

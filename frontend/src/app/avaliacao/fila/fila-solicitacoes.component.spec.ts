@@ -1,6 +1,7 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError, BehaviorSubject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FilaSolicitacoesComponent } from './fila-solicitacoes.component';
 import { AvaliacaoService } from '../avaliacao.service';
@@ -38,9 +39,17 @@ const detalheMock: SolicitacaoDetalheAvaliacao = {
 };
 
 function montar(duble: Partial<AvaliacaoService>): ComponentFixture<FilaSolicitacoesComponent> {
+  const mock = {
+    consultar: () => of([] as SolicitacaoFilaItem[]),
+    detalhar: () => of({ itens: [] } as any),
+    avaliar: () => of({}),
+    onAvaliacaoRealizada: new BehaviorSubject<void>(undefined).asObservable(),
+    ...duble,
+  };
   TestBed.configureTestingModule({
     imports: [FilaSolicitacoesComponent],
-    providers: [provideRouter([]), { provide: AvaliacaoService, useValue: duble }],
+    providers: [provideRouter([]), { provide: AvaliacaoService, useValue: mock }],
+    schemas: [NO_ERRORS_SCHEMA],
   });
   return TestBed.createComponent(FilaSolicitacoesComponent);
 }
@@ -49,7 +58,7 @@ describe('FilaSolicitacoesComponent', () => {
   afterEach(() => TestBed.resetTestingModule());
 
   it('deve listar itens da fila de solicitacoes', () => {
-    const fixture = montar({ listarPendentes: () => of(filaMock) });
+    const fixture = montar({ consultar: () => of(filaMock) });
     fixture.detectChanges();
 
     const texto = fixture.nativeElement.textContent as string;
@@ -61,7 +70,7 @@ describe('FilaSolicitacoesComponent', () => {
 
   it('deve exibir carregamento inicial', () => {
     const fixture = montar({
-      listarPendentes: () => new Observable<SolicitacaoFilaItem[]>(() => {}),
+      consultar: () => new Observable<SolicitacaoFilaItem[]>(() => {}),
     });
     fixture.detectChanges();
 
@@ -70,7 +79,7 @@ describe('FilaSolicitacoesComponent', () => {
   });
 
   it('deve exibir estado vazio quando nao ha solicitacoes pendentes', () => {
-    const fixture = montar({ listarPendentes: () => of([]) });
+    const fixture = montar({ consultar: () => of([]) });
     fixture.detectChanges();
 
     expect(fixture.componentInstance.semSolicitacoes()).toBe(true);
@@ -79,7 +88,7 @@ describe('FilaSolicitacoesComponent', () => {
 
   it('deve exibir mensagem de erro acessivel role="alert" em caso de falha', () => {
     const fixture = montar({
-      listarPendentes: () => throwError(() => new Error('Falha ao carregar fila.')),
+      consultar: () => throwError(() => new Error('Falha ao carregar fila.')),
     });
     fixture.detectChanges();
 
@@ -90,7 +99,7 @@ describe('FilaSolicitacoesComponent', () => {
 
   it('deve expandir e carregar detalhes das atividades submetidas', () => {
     const fixture = montar({
-      listarPendentes: () => of(filaMock),
+      consultar: () => of(filaMock),
       detalhar: () => of(detalheMock),
     });
     fixture.detectChanges();
@@ -104,7 +113,7 @@ describe('FilaSolicitacoesComponent', () => {
 
   it('deve abrir modal de decisao e bloquear confirmacao quando justificativa for obrigatoria e vazia', () => {
     const fixture = montar({
-      listarPendentes: () => of(filaMock),
+      consultar: () => of(filaMock),
     });
     fixture.detectChanges();
 
@@ -123,7 +132,7 @@ describe('FilaSolicitacoesComponent', () => {
 
   it('deve habilitar confirmacao ao preencher justificativa para REJEITADA', () => {
     const fixture = montar({
-      listarPendentes: () => of(filaMock),
+      consultar: () => of(filaMock),
     });
     fixture.detectChanges();
 
@@ -137,7 +146,7 @@ describe('FilaSolicitacoesComponent', () => {
   it('deve aprovar solicitacao, fechar modal e remover item da fila em memoria', () => {
     const spyAvaliar = vi.fn().mockReturnValue(of(detalheMock));
     const fixture = montar({
-      listarPendentes: () => of(filaMock),
+      consultar: () => of(filaMock),
       avaliar: spyAvaliar,
     });
     fixture.detectChanges();
@@ -155,7 +164,7 @@ describe('FilaSolicitacoesComponent', () => {
   it('deve recarregar a fila ao receber erro 409 de concorrencia na avaliacao', () => {
     let recarregou = false;
     const fixture = montar({
-      listarPendentes: () => {
+      consultar: () => {
         recarregou = true;
         return of([filaMock[1]]);
       },

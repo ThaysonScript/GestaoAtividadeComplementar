@@ -222,6 +222,39 @@ public class AtividadeComplementarService {
 		atividadeRepository.delete(atividade);
 	}
 
+	public Resource obterArquivoCertificadoSemRestricao(Long id) {
+		AtividadeComplementar atividade = atividadeRepository.findById(id)
+				.orElseThrow(() -> new AtividadeNaoEncontradaException("Atividade não encontrada."));
+
+		Certificado certificado = atividade.getCertificado();
+		if (certificado == null || certificado.getReferencia() == null) {
+			throw new AtividadeNaoEncontradaException("Certificado não encontrado para esta atividade.");
+		}
+
+		try {
+			Path caminho = Paths.get(certificado.getReferencia()).toAbsolutePath().normalize();
+			if (!caminho.startsWith(diretorioCertificados)) {
+				throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+			}
+
+			Path raizReal = diretorioCertificados.toRealPath();
+			Path caminhoReal = caminho.toRealPath();
+			if (!caminhoReal.startsWith(raizReal)) {
+				throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+			}
+
+			Resource resource = new UrlResource(caminhoReal.toUri());
+			if (resource.exists() && resource.isReadable()) {
+				return resource;
+			}
+			throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Erro ao recuperar arquivo do certificado", e);
+		} catch (IOException e) {
+			throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+		}
+	}
+
 	public AtividadeComplementar buscarPorId(Long id) {
 		return atividadeRepository.findById(id)
 				.orElseThrow(() -> new AtividadeNaoEncontradaException("Atividade não encontrada com o id: " + id));

@@ -13,9 +13,10 @@ export class RevisaoConfirmacaoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${API_BASE_URL}/revisao-confirmacao`;
 
-  listar(): Observable<DadosRevisaoReenvio> {
+  listar(solicitacaoId?: number): Observable<DadosRevisaoReenvio> {
+    const url = solicitacaoId ? `${this.apiUrl}?solicitacaoId=${solicitacaoId}` : this.apiUrl;
     return this.http
-      .get<DadosRevisaoReenvio>(this.apiUrl)
+      .get<DadosRevisaoReenvio>(url)
       .pipe(
         catchError((error: HttpErrorResponse) =>
           throwError(() => new Error(this.traduzirErro(error))),

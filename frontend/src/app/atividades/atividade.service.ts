@@ -62,13 +62,16 @@ export class AtividadeService {
   }
 
   buscarPorId(id: number): Observable<Atividade> {
-    return this.listar().pipe(
-      map((atividades) => {
-        const atividade = atividades.find((a) => a.id === Number(id));
-        if (!atividade) {
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map((res) => {
+        const dto = res as AtividadeListagemDTO;
+        if (!dto || !dto.id) {
           throw new Error('Atividade não encontrada.');
         }
-        return atividade;
+        return this.paraAtividade(dto);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => new Error('Atividade não encontrada.'));
       }),
     );
   }

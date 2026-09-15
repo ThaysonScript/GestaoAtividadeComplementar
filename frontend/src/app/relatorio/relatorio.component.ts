@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RelatorioAtividades } from './relatorio.model';
 import { RelatorioService } from './relatorio.service';
-import { SubmissaoSolicitacaoComponent } from '../solicitacao/submissao/submissao-solicitacao.component';
 
 const ROTULOS_CATEGORIA: Record<string, string> = {
   PESQUISA: 'Pesquisa',
@@ -15,7 +14,7 @@ const ROTULOS_CATEGORIA: Record<string, string> = {
 @Component({
   selector: 'app-relatorio',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubmissaoSolicitacaoComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './relatorio.component.html',
 })
 export class RelatorioComponent implements OnInit {

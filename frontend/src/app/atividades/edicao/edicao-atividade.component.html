@@ -123,7 +123,6 @@
                 id="titulo"
                 type="text"
                 formControlName="titulo"
-                [disabled]="bloqueado()"
                 placeholder="Ex: Minicurso de Python para Análise de Dados"
                 class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
                 [ngClass]="{ 'border-error': isCampoInvalido('titulo') }"
@@ -147,7 +146,6 @@
                   id="instituicao"
                   type="text"
                   formControlName="instituicao"
-                  [disabled]="bloqueado()"
                   placeholder="Ex: UFAPE, Sebrae, etc."
                   class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
                 />
@@ -160,7 +158,6 @@
                   id="data"
                   type="date"
                   formControlName="data"
-                  [disabled]="bloqueado()"
                   class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
                   [ngClass]="{ 'border-error': isCampoInvalido('data') }"
                 />
@@ -191,7 +188,6 @@
                     <input
                       type="radio"
                       formControlName="natureza"
-                      [disabled]="bloqueado()"
                       value="ACC"
                       class="peer sr-only"
                     />
@@ -208,7 +204,6 @@
                     <input
                       type="radio"
                       formControlName="natureza"
-                      [disabled]="bloqueado()"
                       value="ACEX"
                       class="peer sr-only"
                     />
@@ -239,7 +234,6 @@
                     <select
                       id="categoria"
                       formControlName="categoria"
-                      [disabled]="bloqueado()"
                       class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg pl-4 pr-10 py-3 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
                       [ngClass]="{ 'border-error': isCampoInvalido('categoria') }"
                     >
@@ -275,7 +269,6 @@
                     type="number"
                     min="1"
                     formControlName="cargaHoraria"
-                    [disabled]="bloqueado()"
                     placeholder="0"
                     class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
                     [ngClass]="{ 'border-error': isCampoInvalido('cargaHoraria') }"

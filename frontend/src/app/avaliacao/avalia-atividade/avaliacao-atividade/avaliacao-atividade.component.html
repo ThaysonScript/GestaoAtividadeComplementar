@@ -1,0 +1,522 @@
+<div class="min-h-screen bg-[#f8f9fa]">
+  <main class="w-full max-w-[1000px] mx-auto px-4 md:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-[#191c1d]">Avaliação da Atividade</h1>
+        <p class="text-xs text-[#707974] mt-1">
+          Solicitação #{{ solicitacaoId }} • Atividade #{{ atividadeId }}
+        </p>
+      </div>
+      <a routerLink="/avaliacao" class="text-sm font-medium text-[#003629] hover:underline"
+        >Voltar à fila</a
+      >
+    </div>
+
+    @if (mensagemSucesso()) {
+      <div
+        class="mb-6 p-4 bg-[#c3ecd2] text-[#00522e] rounded-xl flex items-center justify-between border border-[#00522e]/20 text-sm shadow-sm"
+      >
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">check_circle</span>
+          <span>{{ mensagemSucesso() }}</span>
+        </div>
+        <button
+          type="button"
+          (click)="mensagemSucesso.set(null)"
+          class="text-[#00522e] hover:opacity-75"
+          aria-label="Fechar"
+        >
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+    }
+
+    @if (carregando()) {
+      <div class="flex flex-col items-center justify-center gap-3 py-20 text-[#404945]">
+        <span class="material-symbols-outlined animate-spin text-4xl text-[#003629]"
+          >progress_activity</span
+        >
+        <p class="text-sm">Carregando dados da atividade...</p>
+      </div>
+    } @else if (mensagemErro()) {
+      <div
+        class="mb-6 p-4 bg-[#ffdad6] text-[#93000a] rounded-xl border border-[#ba1a1a]/20 text-sm"
+      >
+        <p>{{ mensagemErro() }}</p>
+      </div>
+    } @else if (atividade) {
+      <section
+        class="bg-white rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8 mb-6 space-y-8"
+      >
+        <!-- Informações Gerais -->
+        <div class="space-y-6">
+          <h2 class="font-title-md text-title-md text-[#191c1d] border-b border-[#e1e3e4] pb-2">
+            Informações Gerais
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Título</p>
+              <p class="text-[#191c1d] font-medium">{{ atividade.titulo }}</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Instituição Responsável</p>
+              <p class="text-[#191c1d]">{{ atividade.instituicaoResponsavel || '-' }}</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Data de Realização</p>
+              <p class="text-[#191c1d]">{{ dataFormatada(atividade.dataRealizacao) }}</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Carga Horária</p>
+              <p class="text-[#191c1d]">{{ atividade.cargaHorariaEmHoras }}h</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Natureza</p>
+              <p class="text-[#191c1d]">{{ atividade.natureza || '-' }}</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Categoria</p>
+              <p class="text-[#191c1d]">{{ atividade.categoria || '-' }}</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-[#404945]">Status da Atividade</p>
+              <p class="text-[#191c1d] font-medium">{{ atividade.status || 'PENDENTE' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-[#e1e3e4]" />
+
+        <!-- Certificado -->
+        <div class="space-y-4">
+          <h2 class="font-title-md text-title-md text-[#191c1d] border-b border-[#e1e3e4] pb-2">
+            Certificado Anexado
+          </h2>
+          <div
+            class="flex items-center justify-between bg-[#f8f9fa] border border-[#e1e3e4] rounded-xl p-4"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="material-symbols-outlined text-2xl text-[#003629] shrink-0">task</span>
+              <div class="min-w-0">
+                <p class="font-semibold text-[#191c1d] truncate">Certificado da Atividade</p>
+                <p class="text-xs text-[#707974]">Documento anexado pelo estudante</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="visualizarCertificado()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#003629] border border-[#003629] rounded-lg hover:bg-[#003629] hover:text-white transition-colors shrink-0"
+            >
+              <span class="material-symbols-outlined text-[16px]">visibility</span>
+              <span>Visualizar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Marcador de Avaliação, Decisão e Histórico -->
+        <div class="space-y-4 pt-4 border-t border-[#e1e3e4]">
+          <h2 class="font-title-md text-title-md text-[#191c1d] border-b border-[#e1e3e4] pb-2">
+            Avaliação da Atividade
+          </h2>
+          @if (statusItem() !== null && statusItem() === 'APROVADA') {
+            <div class="bg-[#e6efe9]/20 border border-[#003629]/20 rounded-xl p-4 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#003629]">verified</span>
+                <span class="text-sm font-bold text-[#003629]">Avaliada</span>
+              </div>
+              <p class="text-xs text-[#404945]">
+                Decisão: <span class="font-semibold text-[#191c1d]">{{ statusItem() }}</span>
+              </p>
+              <p class="text-xs text-[#707974]">
+                A atividade foi avaliada e finalizada com esta decisão.
+              </p>
+            </div>
+          } @else {
+            <div class="bg-[#fff3d6] border border-[#ffe082] rounded-xl p-4 text-xs text-[#7a5900]">
+              <p class="font-semibold">Pendente de avaliação</p>
+              <p>Esta atividade ainda não foi avaliada pelo avaliador.</p>
+            </div>
+          }
+
+          @if (justificativaItem() && statusItem() !== null && statusItem() === 'APROVADA') {
+            <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-xl p-4 space-y-1">
+              <p class="text-xs font-semibold text-[#404945]">Justificativa / Parecer</p>
+              <p class="text-xs text-[#191c1d] leading-relaxed">{{ justificativaItem() }}</p>
+            </div>
+          }
+
+          <div class="bg-white border border-[#e1e3e4] rounded-xl p-4">
+            <h3 class="text-xs font-bold text-[#191c1d] mb-2">Histórico da Avaliação</h3>
+            <p class="text-xs text-[#707974]">
+              Registros das avaliações realizadas para esta atividade individual.
+            </p>
+            <div class="mt-3 space-y-2">
+              @if (historico && historico.length > 0) {
+                @for (item of historico; track item.id) {
+                  <div class="flex items-center gap-2 text-xs text-[#404945]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#003629] shrink-0"></span>
+                    <span
+                      >Avaliado em {{ dataFormatada(item.dataAvaliacao) }} —
+                      {{ item.tipoParecer || item.statusSolicitacao }}</span
+                    >
+                  </div>
+                }
+              } @else if (statusItem() !== null && statusItem() === 'APROVADA') {
+                <div class="flex items-center gap-2 text-xs text-[#404945]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#003629] shrink-0"></span>
+                  <span
+                    >Avaliada como <strong>{{ statusItem() }}</strong
+                    >.</span
+                  >
+                </div>
+              } @else {
+                <p class="text-xs text-[#707974]">Nenhum registro de avaliação encontrado.</p>
+              }
+            </div>
+          </div>
+
+          @if (parecer) {
+            <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-xl p-4 space-y-1">
+              <p class="text-xs font-semibold text-[#404945]">Parecer da IA</p>
+              <p class="text-xs text-[#191c1d]">
+                Decisão IA: <strong>{{ parecer.decisaoIA }}</strong>
+              </p>
+              <p class="text-xs text-[#191c1d]">
+                Categoria sugerida: {{ parecer.categoriaSugerida }}
+              </p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Detalhes da Atividade Avaliada -->
+      @if (statusItem() !== null && statusItem() === 'APROVADA') {
+        <section
+          class="bg-[#e6efe9]/10 border border-[#003629]/20 rounded-2xl p-6 md:p-8 space-y-4"
+        >
+          <h3 class="text-sm font-bold text-[#003629] mb-2">Detalhes da Avaliação</h3>
+          <p class="text-xs text-[#404945]">
+            A atividade <strong>{{ atividade.titulo }}</strong> foi avaliada com a decisão
+            <strong>{{ rotuloStatus(statusItem()!) }}</strong
+            >.
+          </p>
+          @if (justificativaItem()) {
+            <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-xl p-4 space-y-1">
+              <p class="text-xs font-semibold text-[#404945]">Justificativa / Parecer</p>
+              <p class="text-xs text-[#191c1d] leading-relaxed">{{ justificativaItem() }}</p>
+            </div>
+          }
+          @if (historico && historico.length > 0) {
+            <div class="bg-white border border-[#e1e3e4] rounded-xl p-4">
+              <h4 class="text-xs font-bold text-[#191c1d] mb-2">Histórico</h4>
+              <div class="space-y-2">
+                @for (item of historico; track item.id) {
+                  <div class="flex items-center gap-2 text-xs text-[#404945]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#003629] shrink-0"></span>
+                    <span
+                      >Avaliado em {{ dataFormatada(item.dataAvaliacao) }} —
+                      {{ item.tipoParecer || item.statusSolicitacao }}</span
+                    >
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </section>
+      }
+
+      <!-- Painel de Ações -->
+      @if (statusItem() !== null && statusItem() === 'APROVADA') {
+        <section
+          class="bg-[#e6efe9]/10 border border-[#003629]/20 rounded-2xl p-6 md:p-8 space-y-4"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#003629] text-xl">verified</span>
+            <h3 class="text-base font-bold text-[#191c1d]">Avaliado</h3>
+          </div>
+          <p class="text-xs text-[#404945]">
+            Decisão registrada:
+            <strong class="text-[#191c1d]">{{ rotuloStatus(statusItem() ?? 'SUBMETIDA') }}</strong>
+          </p>
+          @if (justificativaItem()) {
+            <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-xl p-4 space-y-1">
+              <p class="text-xs font-semibold text-[#404945]">Justificativa / Parecer</p>
+              <p class="text-xs text-[#191c1d] leading-relaxed">{{ justificativaItem() }}</p>
+            </div>
+          }
+          @if (historico && historico.length > 0) {
+            <div class="bg-white border border-[#e1e3e4] rounded-xl p-4">
+              <h4 class="text-xs font-bold text-[#191c1d] mb-2">Histórico</h4>
+              <div class="space-y-2">
+                @for (item of historico; track item.id) {
+                  <div class="flex items-center gap-2 text-xs text-[#404945]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#003629] shrink-0"></span>
+                    <span
+                      >Avaliado em {{ dataFormatada(item.dataAvaliacao) }} —
+                      {{ item.tipoParecer || item.statusSolicitacao }}</span
+                    >
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </section>
+      } @else {
+        <section
+          class="bg-white rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-6 md:p-8"
+        >
+          <h2 class="text-base font-bold text-[#191c1d] mb-4">Decisão da Avaliação</h2>
+          <p class="text-xs text-[#707974] mb-4">
+            Esta avaliação se refere à solicitação completa (#{{ solicitacaoId }}). Selecione uma
+            decisão abaixo.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              (click)="abrirModalDecisao('APROVADA')"
+              class="px-5 py-2.5 bg-[#003629] text-white text-xs font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors shadow-sm"
+            >
+              Aprovar Solicitação
+            </button>
+            <button
+              type="button"
+              (click)="abrirModalDecisao('REJEITADA')"
+              class="px-5 py-2.5 bg-[#93000a] text-white text-xs font-bold rounded-lg hover:bg-[#7a1a0a] transition-colors shadow-sm"
+            >
+              Rejeitar
+            </button>
+            <button
+              type="button"
+              (click)="abrirModalDecisao('COM_PENDENCIAS')"
+              class="px-5 py-2.5 bg-[#b78103] text-white text-xs font-bold rounded-lg hover:bg-[#8a6100] transition-colors shadow-sm"
+            >
+              Marcar Pendências
+            </button>
+          </div>
+        </section>
+      }
+    } @else {
+      <div
+        class="bg-white rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-[#e1e3e4] p-12 text-center"
+      >
+        <p class="text-sm text-[#707974]">Nenhuma atividade encontrada.</p>
+      </div>
+    }
+  </main>
+
+  <!-- Modal de Visualização do Certificado -->
+  @if (modalVisualizacaoAberto()) {
+    <dialog
+      class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fadeIn"
+      (click)="fecharModalVisualizacao()"
+      (keydown.escape)="fecharModalVisualizacao()"
+      aria-modal="true"
+      [attr.aria-label]="tituloPrevia()"
+      open
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl border border-[#c0c9c3] w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden"
+        (click)="$event.stopPropagation()"
+        (keydown.escape)="fecharModalVisualizacao()"
+      >
+        <div
+          class="px-6 py-4 border-b border-[#e1e3e4] flex items-center justify-between bg-[#f8f9fa]"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="material-symbols-outlined text-[#003629] text-2xl">description</span>
+            <h3 class="font-title-md text-title-md font-bold text-[#191c1d] truncate">
+              {{ tituloPrevia() }}
+            </h3>
+          </div>
+          <button
+            type="button"
+            (click)="fecharModalVisualizacao()"
+            class="p-2 hover:bg-[#f3f4f5] rounded-full text-[#707974] hover:text-[#191c1d] transition-colors"
+            aria-label="Fechar visualizador"
+          >
+            <span class="material-symbols-outlined text-2xl">close</span>
+          </button>
+        </div>
+        <div
+          class="flex-grow bg-[#f8f9fa] p-4 flex items-center justify-center overflow-auto relative"
+        >
+          @if (carregandoCertificado()) {
+            <div class="flex flex-col items-center gap-3 text-[#404945]">
+              <span class="material-symbols-outlined animate-spin text-4xl text-[#003629]"
+                >progress_activity</span
+              >
+              <p class="text-sm">Carregando arquivo...</p>
+            </div>
+          } @else if (erroCertificado()) {
+            <div
+              class="text-center p-6 bg-[#ffdad6] text-[#93000a] rounded-xl border border-[#ba1a1a]/20 max-w-md"
+            >
+              <span class="material-symbols-outlined text-4xl text-[#ba1a1a] mb-2"
+                >broken_image</span
+              >
+              <p class="text-sm font-medium">{{ erroCertificado() }}</p>
+            </div>
+          } @else if (urlPrevia()) {
+            @if (tipoPrevia() === 'pdf') {
+              <iframe
+                [src]="urlPrevia()"
+                class="w-full h-full rounded-lg shadow-sm border border-[#c0c9c3] bg-white"
+                style="min-height: 60vh"
+              ></iframe>
+            } @else {
+              <img
+                [src]="urlPrevia()"
+                class="max-w-full max-h-full object-contain rounded-lg shadow-sm border border-[#c0c9c3] bg-white"
+                alt="Pré-visualização do comprovante"
+              />
+            }
+          }
+        </div>
+        <div class="px-6 py-3 border-t border-[#e1e3e4] bg-[#f8f9fa] flex justify-end">
+          <button
+            type="button"
+            (click)="fecharModalVisualizacao()"
+            class="px-5 py-2 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#1b4d3e] transition-colors"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </dialog>
+  }
+
+  <!-- Modal de Decisão -->
+  @if (modalDecisaoAberto()) {
+    <dialog
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn"
+      aria-modal="true"
+      aria-labelledby="titulo-dialogo-decisao"
+      open
+    >
+      <div
+        class="bg-white rounded-2xl border border-[#c0c9c3] shadow-2xl p-6 max-w-lg w-full space-y-5"
+      >
+        <div class="flex items-center justify-between border-b border-[#e1e3e4] pb-3">
+          <h2 id="titulo-dialogo-decisao" class="text-base font-bold text-[#191c1d]">
+            Confirmar Decisão: {{ rotuloStatus(decisaoSelecionada()) }}
+          </h2>
+          <button
+            type="button"
+            (click)="fecharModalDecisao()"
+            [disabled]="enviandoDecisao()"
+            class="p-1 hover:bg-[#f3f4f5] rounded-full text-[#707974] disabled:opacity-50"
+            aria-label="Fechar modal"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        @if (erroDecisao()) {
+          <div
+            role="alert"
+            class="p-3 bg-[#ffdad6] text-[#93000a] rounded-lg border border-[#ba1a1a]/20 text-xs flex items-start gap-2"
+          >
+            <span class="material-symbols-outlined text-sm mt-0.5">error</span>
+            <span>{{ erroDecisao() }}</span>
+          </div>
+        }
+
+        <div class="space-y-4 text-sm">
+          <div>
+            <p class="text-xs font-semibold text-[#404945] mb-2">Decisão da Avaliação</p>
+            <div class="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                (click)="decisaoSelecionada.set('APROVADA')"
+                class="py-2 px-3 rounded-lg border text-xs font-bold transition-all text-center"
+                [ngClass]="{
+                  'bg-[#003629] text-white border-[#003629]': decisaoSelecionada() === 'APROVADA',
+                  'bg-white text-[#404945] border-[#c0c9c3] hover:bg-[#f3f4f5]':
+                    decisaoSelecionada() !== 'APROVADA',
+                }"
+              >
+                Aprovar
+              </button>
+              <button
+                type="button"
+                (click)="decisaoSelecionada.set('COM_PENDENCIAS')"
+                class="py-2 px-3 rounded-lg border text-xs font-bold transition-all text-center"
+                [ngClass]="{
+                  'bg-[#b78103] text-white border-[#b78103]':
+                    decisaoSelecionada() === 'COM_PENDENCIAS',
+                  'bg-white text-[#404945] border-[#c0c9c3] hover:bg-[#f3f4f5]':
+                    decisaoSelecionada() !== 'COM_PENDENCIAS',
+                }"
+              >
+                Pendências
+              </button>
+              <button
+                type="button"
+                (click)="decisaoSelecionada.set('REJEITADA')"
+                class="py-2 px-3 rounded-lg border text-xs font-bold transition-all text-center"
+                [ngClass]="{
+                  'bg-[#93000a] text-white border-[#93000a]': decisaoSelecionada() === 'REJEITADA',
+                  'bg-white text-[#404945] border-[#c0c9c3] hover:bg-[#f3f4f5]':
+                    decisaoSelecionada() !== 'REJEITADA',
+                }"
+              >
+                Rejeitar
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label for="campo-justificativa" class="block text-xs font-semibold text-[#404945]">
+              Justificativa / Parecer
+              @if (isJustificativaObrigatoria()) {
+                <span class="text-[#ba1a1a]">* (obrigatória)</span>
+              } @else {
+                <span class="text-[#707974]">(opcional)</span>
+              }
+            </label>
+            <textarea
+              id="campo-justificativa"
+              [value]="justificativa()"
+              (input)="justificativa.set($any($event.target).value)"
+              rows="4"
+              placeholder="Informe o parecer circunstanciado ou orientações para o estudante..."
+              class="w-full bg-[#f8f9fa] border border-[#c0c9c3] rounded-lg p-3 text-xs text-[#191c1d] focus:outline-none focus:border-[#003629] focus:ring-2 focus:ring-[#003629]/20"
+              [ngClass]="{
+                'border-[#ba1a1a]': isJustificativaObrigatoria() && !justificativa().trim(),
+              }"
+            ></textarea>
+            @if (isJustificativaObrigatoria() && !justificativa().trim()) {
+              <p class="text-[11px] text-[#ba1a1a]">
+                A justificativa não pode ficar em branco para esta decisão.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-[#e1e3e4]">
+          <button
+            type="button"
+            (click)="fecharModalDecisao()"
+            [disabled]="enviandoDecisao()"
+            class="px-4 py-2 text-xs font-semibold text-[#404945] border border-[#c0c9c3] rounded-lg hover:bg-[#f3f4f5] transition-colors disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            (click)="confirmarDecisao()"
+            [disabled]="isDecisaoInvalida()"
+            class="px-6 py-2 bg-[#003629] text-white text-xs font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+          >
+            @if (enviandoDecisao()) {
+              <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+              <span>Enviando...</span>
+            } @else {
+              <span>Confirmar Decisão</span>
+            }
+          </button>
+        </div>
+      </div>
+    </dialog>
+  }
+</div>

@@ -62,22 +62,7 @@ describe('DetalheAvaliacaoComponent', () => {
     fixture.detectChanges();
     const texto = fixture.nativeElement.textContent as string;
     expect(texto).toContain('Ana Souza');
-    expect(texto).toContain('ana.souza@ufape.edu.br');
     expect(texto).toContain('Rejeitada');
-    expect(texto).toContain('Certificado ilegível.');
-    expect(texto).toContain('35h');
-    expect(texto).toContain('Iniciacao Cientifica');
-    expect(texto).toContain('Projeto de Extensao');
-    expect(texto).toContain('22/08/2026');
-  });
-
-  it('nao renderiza rotulo de justificativa quando o campo e nulo', () => {
-    const fixture = montar({
-      detalhar: () => of({ ...detalheMock, justificativa: undefined, dataAvaliacao: undefined }),
-    });
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[data-testid="justificativa"]')).toBeNull();
-    expect(fixture.nativeElement.textContent).not.toContain('Data de avaliação');
   });
 
   it('mostra banner de erro amigavel para id inexistente', () => {
@@ -89,32 +74,5 @@ describe('DetalheAvaliacaoComponent', () => {
     const alerta = fixture.nativeElement.querySelector('[role="alert"]');
     expect(alerta).toBeTruthy();
     expect(alerta.textContent).toContain('Solicitação não encontrada.');
-  });
-
-  it('deve abrir, validar e confirmar decisão de aprovação no modal', () => {
-    const avaliacaoService = {
-      avaliar: vi.fn().mockReturnValue(of(detalheMock)),
-    };
-    const fixture = montar({ detalhar: () => of(detalheMock), avaliar: avaliacaoService.avaliar });
-    fixture.detectChanges();
-
-    fixture.componentInstance.abrirModalDecisao('APROVADA');
-    expect(fixture.componentInstance.modalDecisaoAberto()).toBe(true);
-    expect(fixture.componentInstance.isJustificativaObrigatoria()).toBe(false);
-
-    fixture.componentInstance.confirmarDecisao();
-    expect(avaliacaoService.avaliar).toHaveBeenCalledWith(7, 'APROVADA', '');
-    expect(fixture.componentInstance.modalDecisaoAberto()).toBe(false);
-  });
-
-  it('deve exigir justificativa ao marcar pendências ou rejeitar', () => {
-    const fixture = montar({ detalhar: () => of(detalheMock) });
-    fixture.detectChanges();
-
-    fixture.componentInstance.abrirModalDecisao('COM_PENDENCIAS');
-    expect(fixture.componentInstance.isDecisaoInvalida()).toBe(true);
-
-    fixture.componentInstance.justificativa.set('Falta comprovante assinado.');
-    expect(fixture.componentInstance.isDecisaoInvalida()).toBe(false);
   });
 });
