@@ -22,9 +22,13 @@ export class RevisaoConfirmacaoComponent implements OnInit {
   readonly confirmado = signal(false);
   readonly bloqueado = signal(false);
 
-  readonly temRevisao = computed(() => {
+  readonly itensComPendencia = computed(() => {
     const d = this.dados();
-    return !!(d && (d.itensCorrigidos?.length ?? 0) > 0);
+    return d?.itensCorrigidos?.filter((item) => item.status === 'COM_PENDENCIAS') ?? [];
+  });
+
+  readonly temRevisao = computed(() => {
+    return this.itensComPendencia().length > 0;
   });
 
   readonly modoLeitura = computed(() => this.bloqueado() || this.confirmado());
@@ -42,11 +46,15 @@ export class RevisaoConfirmacaoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('solicitacaoId');
-    if (idParam) {
-      this.solicitacaoId.set(Number(idParam));
-    }
-    this.carregarDados();
+    this.route.paramMap.subscribe((params) => {
+      const idParam = params.get('solicitacaoId');
+      if (idParam) {
+        this.solicitacaoId.set(Number(idParam));
+      } else {
+        this.solicitacaoId.set(null);
+      }
+      this.carregarDados();
+    });
   }
 
   carregarDados(): void {
@@ -55,6 +63,8 @@ export class RevisaoConfirmacaoComponent implements OnInit {
     this.service.listar(this.solicitacaoId() ?? undefined).subscribe({
       next: (d) => {
         this.dados.set(d);
+        this.confirmado.set(d.confirmado ?? false);
+        this.bloqueado.set(d.bloqueado ?? false);
         this.carregando.set(false);
       },
       error: (err: Error) => {
@@ -78,7 +88,7 @@ export class RevisaoConfirmacaoComponent implements OnInit {
         if (d?.itensCorrigidos && typeof localStorage !== 'undefined' && localStorage) {
           for (const item of d.itensCorrigidos) {
             const id = item?.atividadeId;
-            if (id != null && localStorage) {
+            if (id != null) {
               localStorage.removeItem(`sgac_revisao_campos_${id}`);
             }
           }
