@@ -48,7 +48,7 @@
           <p class="text-xs text-[#707974]">{{ item.natureza }} • {{ item.cargaHoraria }}h</p>
         </div>
         <div class="shrink-0 flex items-center gap-2">
-          @if (item.status === 'COM_PENDENCIAS' || item.status === 'REJEITADA') {
+          @if (item.status === 'COM_PENDENCIAS') {
             <a
               [routerLink]="['/substituicao-comprovante', detalhe().id, item.atividadeId]"
               class="px-2.5 py-1 bg-[#003629] text-white text-[10px] font-bold rounded-lg hover:bg-[#1b4d3e] transition-colors"
