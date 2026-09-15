@@ -55,7 +55,7 @@ describe('HistoricoParecerService', () => {
 
   it('deve listar vazio quando resposta e vazia', () => {
     service.listarPorEstudante().subscribe((res) => {
-      expect(res.length).toBe(0);
+      expect(res).toHaveLength(0);
     });
     const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres');
     req.flush([]);
@@ -73,7 +73,7 @@ describe('HistoricoParecerService', () => {
 
   it('deve buscar por atividade via GET', () => {
     service.buscarPorAtividade(1).subscribe((res) => {
-      expect(res.length).toBe(1);
+      expect(res).toHaveLength(1);
     });
     const req = httpMock.expectOne('http://localhost:8080/api/v1/historico-pareceres/atividade/1');
     expect(req.request.method).toBe('GET');

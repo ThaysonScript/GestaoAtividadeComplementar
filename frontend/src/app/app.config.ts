@@ -4,7 +4,6 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { AuthInterceptor } from './autenticacao/auth.interceptor';
 import { mockApiInterceptor } from './core/interceptors/mock-api.interceptor';
-import { FooterComponent } from './core/components/footer/footer.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [
