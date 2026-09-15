@@ -7,6 +7,8 @@ export interface DadosRevisaoReenvio {
   observacoesAvaliador?: string;
   statusAnterior: string;
   statusNovo: string;
+  bloqueado?: boolean;
+  confirmado?: boolean;
 }
 
 export interface EstadoRevisaoConfirmacao {
