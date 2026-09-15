@@ -65,7 +65,7 @@ export class AtividadeService {
     return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
       map((res) => {
         const dto = res as AtividadeListagemDTO;
-        if (!dto || !dto.id) {
+        if (!dto?.id) {
           throw new Error('Atividade não encontrada.');
         }
         return this.paraAtividade(dto);
