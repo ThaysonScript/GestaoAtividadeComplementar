@@ -13,6 +13,11 @@ describe('PdfPreviewComponent', () => {
     fixture.detectChanges();
   });
 
+  beforeAll(() => {
+    // Mock window.open para evitar erro no jsdom
+    vi.spyOn(window, 'open').mockImplementation(() => null);
+  });
+
   it('deve criar componente', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
