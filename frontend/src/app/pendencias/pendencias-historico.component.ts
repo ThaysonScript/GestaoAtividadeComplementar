@@ -1,10 +1,11 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
   AtividadeComHistoricoParecer,
   TipoParecerAvaliador,
 } from '../atividades/historico-parecer.model';
+import { HistoricoParecerService } from '../pendencias/historico-parecer.service';
 
 @Component({
   selector: 'app-pendencias-historico',
@@ -13,6 +14,7 @@ import {
   templateUrl: './pendencias-historico.component.html',
 })
 export class PendenciasHistoricoComponent implements OnInit {
+  private readonly historicoService = inject(HistoricoParecerService);
   readonly carregando = signal(true);
   readonly mensagemErro = signal<string | null>(null);
   readonly atividades = signal<AtividadeComHistoricoParecer[]>([]);
@@ -28,69 +30,16 @@ export class PendenciasHistoricoComponent implements OnInit {
   carregarDados(): void {
     this.carregando.set(true);
     this.mensagemErro.set(null);
-
-    // Dados simulados conforme escopo da feature #288
-    const mock: AtividadeComHistoricoParecer[] = [
-      {
-        atividadeId: 1,
-        titulo: 'Monitoria Acadêmica de Algoritmos',
-        natureza: 'ACC',
-        categoria: 'ENSINO',
-        cargaHorariaEmHoras: 30,
-        statusAtual: 'COM_PENDENCIAS',
-        pendenciasAtivas: true,
-        pareceres: [
-          {
-            id: 101,
-            atividadeId: 1,
-            dataAvaliacao: '2026-08-20T10:30:00',
-            statusSolicitacao: 'COM_PENDENCIAS',
-            tipoParecer: 'CORRECAO',
-            justificativa: 'Comprovante ilegível ou sem assinatura do orientador.',
-            observacoes: 'Reenviar com assinatura digitalizada.',
-            artigoRegulamento: 'Art. 12',
-            cargaHorariaAproveitavel: 20,
-          },
-          {
-            id: 102,
-            atividadeId: 1,
-            dataAvaliacao: '2026-09-05T14:00:00',
-            statusSolicitacao: 'APROVADA',
-            tipoParecer: 'PRE_APROVADO',
-            justificativa: 'Documentação completa e dentro dos critérios.',
-            observacoes: 'Mantido conforme regulamento.',
-            artigoRegulamento: 'Art. 12',
-            cargaHorariaAproveitavel: 30,
-          },
-        ],
+    this.historicoService.listarPorEstudante().subscribe({
+      next: (dados) => {
+        this.atividades.set(dados);
+        this.carregando.set(false);
       },
-      {
-        atividadeId: 2,
-        titulo: 'Projeto de Extensão AgroTI Comunitária',
-        natureza: 'ACEX',
-        categoria: 'EXTENSAO',
-        cargaHorariaEmHoras: 60,
-        statusAtual: 'APROVADA',
-        pendenciasAtivas: false,
-        pareceres: [
-          {
-            id: 201,
-            atividadeId: 2,
-            dataAvaliacao: '2026-08-22T11:00:00',
-            statusSolicitacao: 'APROVADA',
-            tipoParecer: 'PRE_APROVADO',
-            justificativa: 'Atividade compatível com os critérios do PPC.',
-            artigoRegulamento: 'Art. 14',
-            cargaHorariaAproveitavel: 60,
-          },
-        ],
+      error: (erro: Error) => {
+        this.mensagemErro.set(erro.message);
+        this.carregando.set(false);
       },
-    ];
-
-    setTimeout(() => {
-      this.atividades.set(mock);
-      this.carregando.set(false);
-    }, 400);
+    });
   }
 
   classeParecer(tipo: TipoParecerAvaliador): string {
