@@ -1,13 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { RevisaoConfirmacaoComponent } from './revisao-confirmacao.component';
 import { RevisaoConfirmacaoService } from './revisao-confirmacao.service';
 
 const mockDados = {
   solicitacaoId: 8,
-  itensCorrigidos: [{ atividadeId: 3, titulo: 'Monitoria', cargaHoraria: 30, natureza: 'ACC' }],
+  itensCorrigidos: [
+    {
+      atividadeId: 3,
+      titulo: 'Monitoria',
+      cargaHoraria: 30,
+      natureza: 'ACC',
+      status: 'COM_PENDENCIAS',
+    },
+  ],
   novosComprovantes: ['certificado_corrigido.pdf'],
   observacoesAvaliador: 'Reenviar com assinatura.',
   statusAnterior: 'COM_PENDENCIAS',
@@ -32,6 +40,10 @@ describe('RevisaoConfirmacaoComponent', () => {
       providers: [
         provideRouter([]),
         { provide: RevisaoConfirmacaoService, useClass: MockRevisaoService },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of({ get: () => '8' }) },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(RevisaoConfirmacaoComponent);
