@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SubstituicaoComprovanteComponent } from './substituicao-comprovante.component';
 
