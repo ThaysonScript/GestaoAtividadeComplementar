@@ -17,19 +17,27 @@ export class SubstituicaoComprovanteComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   readonly dados = signal<DadosSubstituicaoComprovante | null>(null);
   readonly substituindo = signal(false);
-
-  readonly atividade = input.required<{ id: number; titulo: string; status?: string; pendencias?: boolean }>();
+  readonly atividadeId = signal<number | null>(null);
+  readonly atividadeTitulo = signal<string | null>(null);
   readonly carregando = signal(false);
   readonly arquivo = signal<File | null>(null);
   readonly erroArquivo = signal<string | null>(null);
-  readonly bloqueado = computed(() => this.atividade() && !this.atividade().pendencias);
+  readonly bloqueado = computed(() => {
+    const id = this.atividadeId();
+    if (!id) return true;
+    // Se nao tem dados carregados ainda, considera bloqueado por seguranca
+    return false;
+  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
+      this.atividadeId.set(id);
+      this.carregando.set(true);
       this.atividadeService.buscarPorId(id).subscribe({
         next: (atividade) => {
+          this.atividadeTitulo.set(atividade.titulo);
           this.dados.set({
             atividadeId: atividade.id,
             titulo: atividade.titulo,
@@ -37,10 +45,13 @@ export class SubstituicaoComprovanteComponent implements OnInit {
             novoComprovante: null,
             validacaoTamanho: true,
             validacaoTipo: true,
-            bloqueado: false,
+            bloqueado: !(atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS'),
           });
+          this.carregando.set(false);
         },
-        error: () => {},
+        error: () => {
+          this.carregando.set(false);
+        },
       });
     }
   }
@@ -71,7 +82,7 @@ export class SubstituicaoComprovanteComponent implements OnInit {
     }
     this.arquivo.set(file);
     this.substituindo.set(true);
-    this.substituicaoService.substituir(this.atividade().id, file).subscribe({
+    this.substituicaoService.substituir(this.atividadeId() ?? 0, file).subscribe({
       next: () => {
         this.substituindo.set(false);
       },
