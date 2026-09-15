@@ -33,6 +33,16 @@ export class SolicitacaoService {
     );
   }
 
+  verificarEmAbertoComAtividade(atividadeId: number): Observable<boolean> {
+    return this.http
+      .get<boolean>(`${this.apiUrl}/atividade/${atividadeId}/em-aberto`)
+      .pipe(
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => new Error('Não foi possível verificar solicitação em aberto.')),
+        ),
+      );
+  }
+
   detalhar(id: number): Observable<SolicitacaoDetalhe> {
     return this.http
       .get<SolicitacaoDetalhe>(`${this.apiUrl}/${id}`)
