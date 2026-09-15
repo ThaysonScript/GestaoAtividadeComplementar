@@ -50,9 +50,9 @@ public class SolicitacaoAvaliacaoController {
 	}
 
 	@PatchMapping("/{solicitacaoId}/atividades/{atividadeId}/avaliacao")
-	public ResponseEntity<SolicitacaoAvaliadorDetalheResponseDTO> avaliarAtividade(
-			@PathVariable Long solicitacaoId, @PathVariable Long atividadeId,
-			@RequestBody @Valid AvaliacaoSolicitacaoRequestDTO request, Authentication authentication) {
+	public ResponseEntity<SolicitacaoAvaliadorDetalheResponseDTO> avaliarAtividade(@PathVariable Long solicitacaoId,
+			@PathVariable Long atividadeId, @RequestBody @Valid AvaliacaoSolicitacaoRequestDTO request,
+			Authentication authentication) {
 		if (authentication == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
