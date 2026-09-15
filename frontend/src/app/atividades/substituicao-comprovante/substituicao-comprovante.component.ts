@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { DadosSubstituicaoComprovante } from './substituicao-comprovante.model';
 import { SubstituicaoService } from '../../solicitacao/substituicao.service';
 import { AtividadeService } from '../atividade.service';
@@ -14,6 +14,8 @@ import { AtividadeService } from '../atividade.service';
 export class SubstituicaoComprovanteComponent implements OnInit {
   private readonly atividadeService = inject(AtividadeService);
   private readonly substituicaoService = inject(SubstituicaoService);
+  private readonly route = inject(ActivatedRoute);
+  readonly dados = signal<DadosSubstituicaoComprovante | null>(null);
   readonly substituindo = signal(false);
 
   readonly atividade = input.required<{ id: number; titulo: string; status?: string; pendencias?: boolean }>();
@@ -23,10 +25,18 @@ export class SubstituicaoComprovanteComponent implements OnInit {
   readonly bloqueado = computed(() => this.atividade() && !this.atividade().pendencias);
 
   ngOnInit(): void {
-    if (this.atividade().id) {
-      this.atividadeService.buscarPorId(this.atividade().id).subscribe({
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      const id = Number(idParam);
+      this.atividadeService.buscarPorId(id).subscribe({
         next: (atividade) => {
-          // Dados carregados via mock; substituicao pode ser feita diretamente
+          this.dados.set({
+            atividadeId: atividade.id,
+            titulo: atividade.titulo,
+            statusAtual: atividade.status,
+            pendenciasAtivas: atividade.status === 'PENDENTE' || atividade.status === 'COM_PENDENCIAS',
+            pareceres: [],
+          });
         },
         error: () => {},
       });
