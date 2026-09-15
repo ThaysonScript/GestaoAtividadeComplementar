@@ -58,6 +58,16 @@ public class SolicitacaoEstudanteController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
+	@GetMapping("/atividade/{atividadeId}/em-aberto")
+	public ResponseEntity<Boolean> verificarEmAbertoComAtividade(@PathVariable Long atividadeId,
+			Authentication authentication) {
+		if (authentication == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		boolean emAberto = solicitacaoFacade.existeSolicitacaoEmAbertoComAtividade(atividadeId);
+		return ResponseEntity.ok(emAberto);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<SolicitacaoDetalheResponseDTO> detalhar(@PathVariable Long id,
 			Authentication authentication) {
