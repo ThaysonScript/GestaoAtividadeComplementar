@@ -174,4 +174,31 @@ describe('AvaliacaoService', () => {
     req.flush(resumoMock);
     expect(recebido).toEqual(resumoMock);
   });
+
+  it('deve avaliar por atividade', () => {
+    let recebido: SolicitacaoAvaliadorDetalhe | undefined;
+    service.avaliarPorAtividade(7, 2, 'APROVADA', 'Bom').subscribe((res) => (recebido = res));
+
+    const req = httpMock.expectOne(`${url}/7/atividades/2/avaliacao`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ decisao: 'APROVADA', justificativa: 'Bom' });
+    req.flush({ ...detalheMock, status: 'APROVADA' });
+  });
+
+  it('deve traduzir erro 500 na avaliarPorAtividade', () => {
+    let erro: Error | undefined;
+    service.avaliarPorAtividade(7, 2, 'APROVADA').subscribe({ error: (e: Error) => (erro = e) });
+    httpMock
+      .expectOne(`${url}/7/atividades/2/avaliacao`)
+      .flush(null, { status: 500, statusText: 'Error' });
+    expect(erro?.message).toContain('Não foi possível registrar');
+  });
+
+  it('deve traduzir erro 0 no consultar', () => {
+    let erro: Error | undefined;
+    service.consultar().subscribe({ error: (e: Error) => (erro = e) });
+    const req = httpMock.expectOne(`${url}/avaliacao`);
+    req.error(new ProgressEvent('error'), { status: 0 });
+    expect(erro?.message).toBe('Não foi possível conectar ao servidor. Verifique sua conexão.');
+  });
 });

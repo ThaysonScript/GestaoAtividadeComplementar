@@ -30,6 +30,12 @@ public class SolicitacaoAtividade {
 	@Column(name = "natureza", nullable = false)
 	private String natureza;
 
+	@Column(name = "status")
+	private String status;
+
+	@Column(name = "justificativa")
+	private String justificativa;
+
 	public SolicitacaoAtividade() {
 	}
 
@@ -78,5 +84,21 @@ public class SolicitacaoAtividade {
 
 	public void setNatureza(String natureza) {
 		this.natureza = natureza;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
 	}
 }

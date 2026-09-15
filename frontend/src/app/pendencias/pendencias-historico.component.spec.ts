@@ -1,32 +1,46 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { Subject, of } from 'rxjs';
 import { PendenciasHistoricoComponent } from './pendencias-historico.component';
+import { HistoricoParecerService } from './historico-parecer.service';
 
 describe('PendenciasHistoricoComponent', () => {
   let fixture: ComponentFixture<PendenciasHistoricoComponent>;
   let componente: PendenciasHistoricoComponent;
+  let listarMock: Subject<any[]>;
 
   beforeEach(async () => {
+    listarMock = new Subject<any[]>();
     await TestBed.configureTestingModule({
       imports: [PendenciasHistoricoComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: HistoricoParecerService,
+          useValue: {
+            listarPorEstudante: () => listarMock.asObservable(),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PendenciasHistoricoComponent);
     componente = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('deve ser criado', () => {
+    fixture.detectChanges();
     expect(componente).toBeTruthy();
   });
 
   it('deve exibir estado de carregamento inicialmente', () => {
+    fixture.detectChanges();
     expect(componente.carregando()).toBe(true);
   });
 
   it('deve calcular sem atividades quando lista esta vazia e nao esta carregando', () => {
-    componente['atividades'].set([]);
+    listarMock.next([]);
+    fixture.detectChanges();
     componente['carregando'].set(false);
     fixture.detectChanges();
     expect(componente.semAtividades()).toBe(true);
@@ -43,7 +57,8 @@ describe('PendenciasHistoricoComponent', () => {
   });
 
   it('deve calcular temPendencias quando ha atividades com pendencias ativas', () => {
-    componente['atividades'].set([
+    fixture.detectChanges();
+    listarMock.next([
       {
         atividadeId: 1,
         titulo: 'Teste',
@@ -55,7 +70,6 @@ describe('PendenciasHistoricoComponent', () => {
         pareceres: [],
       },
     ]);
-    fixture.detectChanges();
     expect(componente.temPendencias()).toBe(true);
   });
 });

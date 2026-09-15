@@ -47,7 +47,8 @@ function processarRotasMock(
     handleRelatoriosMocks(req, url, method) ??
     handleNotificacoesMocks(req, url, method) ??
     handleRevisaoConfirmacaoMocks(req, url, method) ??
-    handleSubstituicaoMocks(req, url, method)
+    handleSubstituicaoMocks(req, url, method) ??
+    handleHistoricoPareceresMocks(req, url, method)
   );
 }
 
@@ -704,14 +705,28 @@ function handleRevisaoConfirmacaoMocks(
   if (url.endsWith('/revisao-confirmacao') && method === 'PATCH') {
     const bodyObj = extrairDadosCorpo(req);
     const confirmado = (bodyObj['confirmado'] as boolean) ?? true;
+    const solicitacaoId = bodyObj['solicitacaoId'] ?? 1;
     return jsonResponse(200, {
       ...REVISAO_CONFIRMACAO_MOCK,
+      solicitacaoId,
       statusNovo: 'SUBMETIDA',
       bloqueado: true,
       confirmado,
     });
   }
 
+  return null;
+}
+
+function handleHistoricoPareceresMocks(
+  req: HttpRequest<unknown>,
+  url: string,
+  method: string,
+): Observable<HttpResponse<unknown>> | null {
+  if (!url.includes('/historico-pareceres')) return null;
+  if (method === 'GET') {
+    return jsonResponse(200, []);
+  }
   return null;
 }
 

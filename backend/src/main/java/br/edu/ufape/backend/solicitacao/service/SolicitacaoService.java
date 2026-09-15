@@ -122,6 +122,49 @@ public class SolicitacaoService {
 		return solicitacaoValidacaoRepository.findByStatusOrderByDataSubmissaoDesc(status);
 	}
 
+	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status,
+			String justificativa) {
+		SolicitacaoValidacao solicitacao = solicitacaoValidacaoRepository.findById(solicitacaoId)
+				.orElseThrow(() -> new SolicitacaoNaoEncontradaException(solicitacaoId));
+
+		solicitacao.getItens().stream().filter(i -> i.getAtividadeId().equals(atividadeId)).findFirst().ifPresent(i -> {
+			i.setStatus(status);
+			i.setJustificativa(justificativa);
+		});
+
+		return solicitacaoValidacaoRepository.save(solicitacao);
+	}
+
+	@Transactional
+	public SolicitacaoValidacao anexarAtividade(Long solicitacaoId, Long atividadeId) {
+		SolicitacaoValidacao solicitacao = solicitacaoValidacaoRepository.findById(solicitacaoId)
+				.orElseThrow(() -> new SolicitacaoNaoEncontradaException(solicitacaoId));
+
+		if (solicitacao.getStatus() != StatusSolicitacao.SUBMETIDA
+				&& solicitacao.getStatus() != StatusSolicitacao.EM_ANALISE) {
+			throw new SolicitacaoEmAbertoException(
+					"Nao e possivel anexar atividade a uma solicitacao que nao esta em aberto.");
+		}
+
+		if (atividadeId == null) {
+			throw new IllegalArgumentException("O ID da atividade e obrigatorio para anexar a solicitacao.");
+		}
+
+		boolean jaExiste = solicitacao.getItens().stream().anyMatch(i -> i.getAtividadeId().equals(atividadeId));
+		if (jaExiste) {
+			throw new IllegalArgumentException("Esta atividade ja esta anexada a solicitacao.");
+		}
+
+		AtividadeResponseDTO atividade = atividadeContrato.buscarPorId(atividadeId);
+		solicitacao.getItens().add(new SolicitacaoAtividade(atividade.id(), atividade.titulo(),
+				atividade.cargaHorariaEmHoras(), atividade.natureza() != null ? atividade.natureza().name() : null));
+
+		SolicitacaoValidacao solicitacaoSalva = solicitacaoValidacaoRepository.save(solicitacao);
+		notificacaoContrato.notificarMudancaStatusSolicitacao(solicitacaoSalva.getEstudanteId(),
+				solicitacaoSalva.getId(), solicitacaoSalva.getStatus().name(), null);
+		return solicitacaoSalva;
+	}
+
 	@Transactional(readOnly = true)
 	public SolicitacaoValidacao detalharParaAvaliacao(Long solicitacaoId) {
 		return solicitacaoValidacaoRepository.findByIdComItens(solicitacaoId)

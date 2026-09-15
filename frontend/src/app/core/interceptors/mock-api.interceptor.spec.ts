@@ -529,4 +529,45 @@ describe('mockApiInterceptor - Cobertura Total 100%', () => {
       expect(status204).toBe(204);
     });
   });
+
+  describe('Handlers Adicionais para Cobertura', () => {
+    it('deve processar substituicao-comprovante POST e PATCH', () => {
+      ATIVIDADES_MOCK.length = 0;
+      ATIVIDADES_MOCK.push({
+        id: 5,
+        titulo: 'Atividade',
+        status: 'PENDENTE',
+        natureza: 'ACC',
+        cargaHorariaEmHoras: 10,
+      } as any);
+
+      let respostaPost: any;
+      const formData = new FormData();
+      formData.append('arquivo', new File(['pdf'], 'test.pdf', { type: 'application/pdf' }));
+      http.post('/substituicao-comprovante', formData).subscribe((res) => (respostaPost = res));
+      vi.advanceTimersByTime(250);
+      expect(respostaPost).toBeDefined();
+
+      let respostaPatch: any;
+      http
+        .patch('/substituicao-comprovante/5', { natureza: 'ACEX' })
+        .subscribe((res) => (respostaPatch = res));
+      vi.advanceTimersByTime(250);
+      expect(respostaPatch.natureza).toBe('ACEX');
+    });
+
+    it('deve responder revisao-confirmacao', () => {
+      let revisao: any;
+      http.get('/revisao-confirmacao').subscribe((res) => (revisao = res));
+      vi.advanceTimersByTime(250);
+      expect(revisao).toBeDefined();
+
+      let confirmacao: any;
+      http
+        .patch('/revisao-confirmacao', { confirmado: true, solicitacaoId: 2 })
+        .subscribe((res) => (confirmacao = res));
+      vi.advanceTimersByTime(250);
+      expect(confirmacao.confirmado).toBe(true);
+    });
+  });
 });

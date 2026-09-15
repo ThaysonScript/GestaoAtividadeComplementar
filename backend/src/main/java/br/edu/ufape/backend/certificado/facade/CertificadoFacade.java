@@ -16,4 +16,8 @@ public class CertificadoFacade {
 	public Resource obterCertificado(Long atividadeId, String emailEstudante) {
 		return atividadeComplementarService.obterArquivoCertificado(atividadeId, emailEstudante);
 	}
+
+	public Resource obterCertificadoSemRestricao(Long atividadeId) {
+		return atividadeComplementarService.obterArquivoCertificadoSemRestricao(atividadeId);
+	}
 }

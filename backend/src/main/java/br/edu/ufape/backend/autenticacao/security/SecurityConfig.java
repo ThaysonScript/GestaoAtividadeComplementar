@@ -79,6 +79,10 @@ public class SecurityConfig {
 							.hasRole(ROLE_ESTUDANTE);
 					auth.requestMatchers(HttpMethod.PUT, ROTA_ATIVIDADES_WILDCARD).hasRole(ROLE_ESTUDANTE);
 					auth.requestMatchers(HttpMethod.DELETE, ROTA_ATIVIDADES_WILDCARD).hasRole(ROLE_ESTUDANTE);
+					auth.requestMatchers(HttpMethod.GET, "/api/v1/atividades/{id:[0-9]+}").hasAnyRole(ROLE_ESTUDANTE,
+							ROLE_AVALIADOR, ROLE_ADMIN);
+					auth.requestMatchers(HttpMethod.GET, "/api/v1/atividades/*/certificado").hasAnyRole(ROLE_ESTUDANTE,
+							ROLE_AVALIADOR, ROLE_ADMIN);
 					auth.requestMatchers(HttpMethod.GET, "/api/v1/atividades", ROTA_ATIVIDADES_WILDCARD,
 							"/api/v1/atividades/progresso").hasRole(ROLE_ESTUDANTE);
 					auth.requestMatchers(HttpMethod.GET, "/api/v1/relatorios", "/api/v1/relatorios/**")

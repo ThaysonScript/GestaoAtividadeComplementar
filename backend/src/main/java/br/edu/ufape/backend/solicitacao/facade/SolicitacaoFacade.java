@@ -38,6 +38,12 @@ public class SolicitacaoFacade {
 		return new SolicitacaoResponseDTO(solicitacao);
 	}
 
+	public SolicitacaoResponseDTO anexarAtividade(String emailEstudante, Long solicitacaoId, Long atividadeId) {
+		obterEstudante(emailEstudante);
+		SolicitacaoValidacao resultado = solicitacaoService.anexarAtividade(solicitacaoId, atividadeId);
+		return new SolicitacaoResponseDTO(resultado);
+	}
+
 	public SolicitacaoResponseDTO submeter(Long estudanteId) {
 		SolicitacaoValidacao solicitacao = solicitacaoService.submeter(estudanteId);
 		return new SolicitacaoResponseDTO(solicitacao);
@@ -72,6 +78,15 @@ public class SolicitacaoFacade {
 					.orElse("Estudante Não Encontrado");
 			return new SolicitacaoAvaliadorResumoResponseDTO(solicitacao, estudanteNome);
 		}).toList();
+	}
+
+	public SolicitacaoValidacao avaliarPorAtividade(Long solicitacaoId, Long atividadeId, String status,
+			String justificativa) {
+		return solicitacaoService.avaliarPorAtividade(solicitacaoId, atividadeId, status, justificativa);
+	}
+
+	public boolean existeSolicitacaoEmAbertoComAtividade(Long atividadeId) {
+		return solicitacaoService.existeSolicitacaoEmAbertoComAtividade(atividadeId);
 	}
 
 	public SolicitacaoAvaliadorDetalheResponseDTO detalharParaAvaliacao(Long solicitacaoId) {

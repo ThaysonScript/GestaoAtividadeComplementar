@@ -34,6 +34,12 @@ public class AtividadeContratoImpl implements AtividadeContrato {
 
 	@Override
 	@Transactional(readOnly = true)
+	public AtividadeResponseDTO buscarPorId(Long id) {
+		return new AtividadeResponseDTO(atividadeComplementarService.buscarPorId(id));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public List<AtividadeResponseDTO> buscarPorEstudanteENatureza(String emailEstudante, Natureza natureza) {
 		return atividadeComplementarService.listarAtividadesDoEstudante(emailEstudante, natureza, null).stream()
 				.map(AtividadeResponseDTO::new).toList();

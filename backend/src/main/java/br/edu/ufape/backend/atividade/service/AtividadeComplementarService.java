@@ -43,6 +43,7 @@ public class AtividadeComplementarService {
 	private static final String MENSAGEM_ACESSO_NEGADO = "Apenas estudantes podem listar atividades complementares.";
 	private static final String MENSAGEM_ACESSO_NEGADO_EDICAO = "Você não tem permissão para editar esta atividade.";
 	private static final String MENSAGEM_ACESSO_NEGADO_EXCLUSAO = "Atividade não encontrada ou não pertence ao estudante autenticado.";
+	private static final String MENSAGEM_ATIVIDADE_NAO_ENCONTRADA = "Atividade não encontrada.";
 	private static final String MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO = "Arquivo físico do certificado não encontrado no servidor.";
 
 	private final AtividadeComplementarRepository atividadeRepository;
@@ -96,7 +97,7 @@ public class AtividadeComplementarService {
 	public Resource obterArquivoCertificado(Long id, String emailEstudante) {
 		Estudante estudante = obterEstudante(emailEstudante);
 		AtividadeComplementar atividade = atividadeRepository.findById(id)
-				.orElseThrow(() -> new AtividadeNaoEncontradaException("Atividade não encontrada."));
+				.orElseThrow(() -> new AtividadeNaoEncontradaException(MENSAGEM_ATIVIDADE_NAO_ENCONTRADA));
 
 		if (!atividade.getEstudante().getId().equals(estudante.getId())) {
 			throw new AcessoNegadoAtividadeException(MENSAGEM_ACESSO_NEGADO_EDICAO);
@@ -161,7 +162,7 @@ public class AtividadeComplementarService {
 			MultipartFile novoArquivo, String emailEstudante) {
 		Estudante estudante = obterEstudante(emailEstudante);
 		AtividadeComplementar atividade = atividadeRepository.findById(id)
-				.orElseThrow(() -> new AtividadeNaoEncontradaException("Atividade não encontrada."));
+				.orElseThrow(() -> new AtividadeNaoEncontradaException(MENSAGEM_ATIVIDADE_NAO_ENCONTRADA));
 
 		if (!atividade.getEstudante().getId().equals(estudante.getId())) {
 			throw new AcessoNegadoAtividadeException(MENSAGEM_ACESSO_NEGADO_EDICAO);
@@ -220,6 +221,39 @@ public class AtividadeComplementarService {
 		parecerConformidadeRepository.findByAtividadeId(id).ifPresent(parecerConformidadeRepository::delete);
 		removerArquivoCertificado(atividade.getCertificado());
 		atividadeRepository.delete(atividade);
+	}
+
+	public Resource obterArquivoCertificadoSemRestricao(Long id) {
+		AtividadeComplementar atividade = atividadeRepository.findById(id)
+				.orElseThrow(() -> new AtividadeNaoEncontradaException(MENSAGEM_ATIVIDADE_NAO_ENCONTRADA));
+
+		Certificado certificado = atividade.getCertificado();
+		if (certificado == null || certificado.getReferencia() == null) {
+			throw new AtividadeNaoEncontradaException("Certificado não encontrado para esta atividade.");
+		}
+
+		try {
+			Path caminho = Paths.get(certificado.getReferencia()).toAbsolutePath().normalize();
+			if (!caminho.startsWith(diretorioCertificados)) {
+				throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+			}
+
+			Path raizReal = diretorioCertificados.toRealPath();
+			Path caminhoReal = caminho.toRealPath();
+			if (!caminhoReal.startsWith(raizReal)) {
+				throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+			}
+
+			Resource resource = new UrlResource(caminhoReal.toUri());
+			if (resource.exists() && resource.isReadable()) {
+				return resource;
+			}
+			throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Erro ao recuperar arquivo do certificado", e);
+		} catch (IOException e) {
+			throw new AtividadeNaoEncontradaException(MENSAGEM_ARQUIVO_FISICO_NAO_ENCONTRADO);
+		}
 	}
 
 	public AtividadeComplementar buscarPorId(Long id) {

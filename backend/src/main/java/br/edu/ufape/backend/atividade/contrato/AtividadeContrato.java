@@ -20,4 +20,6 @@ public interface AtividadeContrato {
 	 *             se o email não existir ou não pertencer a um Estudante
 	 */
 	List<AtividadeResponseDTO> buscarPorEstudanteENatureza(String emailEstudante, Natureza natureza);
+
+	AtividadeResponseDTO buscarPorId(Long id);
 }

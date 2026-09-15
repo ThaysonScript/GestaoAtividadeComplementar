@@ -28,9 +28,14 @@ const solicitacoesMock: SolicitacaoAvaliadorResumo[] = [
 ];
 
 function montar(duble: Partial<AvaliacaoService>): ComponentFixture<ConsultaSolicitacoesComponent> {
+  const mock = {
+    consultar: () => of([] as SolicitacaoAvaliadorResumo[]),
+    detalhar: () => of({ id: 1, itens: [], status: 'SUBMETIDA' } as any),
+    ...duble,
+  };
   TestBed.configureTestingModule({
     imports: [ConsultaSolicitacoesComponent],
-    providers: [provideRouter([]), { provide: AvaliacaoService, useValue: duble }],
+    providers: [provideRouter([]), { provide: AvaliacaoService, useValue: mock }],
   });
   return TestBed.createComponent(ConsultaSolicitacoesComponent);
 }

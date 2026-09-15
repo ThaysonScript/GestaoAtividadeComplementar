@@ -8,12 +8,21 @@
             Atividades complementares que você cadastrou
           </p>
         </div>
-        <a
-          routerLink="/atividades/cadastro"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container text-white text-xs font-semibold rounded-lg hover:bg-primary transition-colors self-start sm:self-auto"
-        >
-          <span>+ Cadastrar Atividade</span>
-        </a>
+        <div class="flex gap-2">
+          <a
+            routerLink="/solicitacoes/enviar"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#00291f] transition-colors self-start sm:self-auto"
+          >
+            <span class="material-symbols-outlined text-[16px]">send</span>
+            <span>Enviar Solicitação</span>
+          </a>
+          <a
+            routerLink="/atividades/cadastro"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container text-white text-xs font-semibold rounded-lg hover:bg-primary transition-colors self-start sm:self-auto"
+          >
+            <span>+ Cadastrar Atividade</span>
+          </a>
+        </div>
       </div>
 
       <section

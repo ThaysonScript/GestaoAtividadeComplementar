@@ -83,4 +83,46 @@ describe('SolicitacaoService', () => {
     expect(erroStr?.message).toBe('Erro direto em string');
     expect(erroObj?.message).toBe('Objeto de erro');
   });
+
+  it('deve submeter com id de solicitacao e atividade', () => {
+    service.submeter(1, 5).subscribe((res) => expect(res.id).toBeTruthy());
+    const req = httpMock.expectOne(`${url}/1/atividades`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toBe(5);
+    req.flush({ id: 1 });
+  });
+
+  it('deve traduzir erro 404 no detalhar', () => {
+    let erro: Error | undefined;
+    service.detalhar(99).subscribe({ error: (e: Error) => (erro = e) });
+    httpMock.expectOne(`${url}/99`).flush(null, { status: 404, statusText: 'Not Found' });
+    expect(erro?.message).toBe('Solicitação não encontrada.');
+  });
+
+  it('deve traduzir erro 409 na submissao', () => {
+    let erro: Error | undefined;
+    service.submeter().subscribe({ error: (e: Error) => (erro = e) });
+    httpMock
+      .expectOne(url)
+      .flush({ message: 'Em aberto' }, { status: 409, statusText: 'Conflict' });
+    expect(erro?.message).toBe('Em aberto');
+  });
+
+  it('deve traduzir erro 422 na submissao', () => {
+    let erro: Error | undefined;
+    service.submeter().subscribe({ error: (e: Error) => (erro = e) });
+    httpMock.expectOne(url).flush(null, { status: 422, statusText: 'Unprocessable' });
+    expect(erro?.message).toBe(
+      'Cadastre ao menos uma atividade antes de enviar o relatório para validação.',
+    );
+  });
+
+  it('deve traduzir erro 404 na listagem', () => {
+    let erro: Error | undefined;
+    service.listar().subscribe({ error: (e: Error) => (erro = e) });
+    httpMock
+      .expectOne(url)
+      .flush({ message: 'Nao achado' }, { status: 404, statusText: 'Not Found' });
+    expect(erro?.message).toBe('Nao achado');
+  });
 });

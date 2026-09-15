@@ -22,10 +22,10 @@ import { SolicitacaoResumo } from '../../solicitacao/solicitacao.model';
               </p>
             </div>
             <a
-              routerLink="/relatorio"
+              routerLink="/solicitacoes/enviar"
               class="px-4 py-2 bg-[#003629] text-white text-xs font-semibold rounded-lg hover:bg-[#1b4d3e] transition-colors"
             >
-              Emitir Relatório
+              Enviar Solicitação
             </a>
           </div>
         } @else if (

@@ -68,6 +68,10 @@ public class AtividadeFacade {
 		return auditoriaService.calcularTempoMedioMs();
 	}
 
+	public AtividadeResponseDTO buscarPorId(Long id) {
+		return new AtividadeResponseDTO(atividadeComplementarService.buscarPorId(id));
+	}
+
 	public ParecerResponseDTO avaliarAtividade(Long atividadeId, AvaliacaoDecisaoRequestDTO request) {
 		return avaliacaoAtividadeService.avaliarAtividade(atividadeId, request);
 	}

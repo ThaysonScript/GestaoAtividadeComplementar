@@ -13,9 +13,10 @@ export class SolicitacaoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${API_BASE_URL}/solicitacoes`;
 
-  submeter(): Observable<SolicitacaoDetalhe> {
+  submeter(solicitacaoId?: number, atividadeId?: number): Observable<SolicitacaoDetalhe> {
+    const url = solicitacaoId ? `${this.apiUrl}/${solicitacaoId}/atividades` : this.apiUrl;
     return this.http
-      .post<SolicitacaoDetalhe>(this.apiUrl, {})
+      .post<SolicitacaoDetalhe>(url, solicitacaoId ? (atividadeId ?? null) : undefined)
       .pipe(
         catchError((error: HttpErrorResponse) =>
           throwError(() => new Error(this.traduzirErroSubmissao(error))),
@@ -30,6 +31,16 @@ export class SolicitacaoService {
         throwError(() => new Error(this.traduzirErroLeitura(error))),
       ),
     );
+  }
+
+  verificarEmAbertoComAtividade(atividadeId: number): Observable<boolean> {
+    return this.http
+      .get<boolean>(`${this.apiUrl}/atividade/${atividadeId}/em-aberto`)
+      .pipe(
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => new Error('Não foi possível verificar solicitação em aberto.')),
+        ),
+      );
   }
 
   detalhar(id: number): Observable<SolicitacaoDetalhe> {

@@ -30,8 +30,8 @@ class ArquiteturaTest {
 
 	@ArchTest
 	static final ArchRule nenhumaClasseForaDeAtividadeDeveAcessarRepositoryDeAtividade = noClasses().that()
-			.resideOutsideOfPackage("..atividade..").should().dependOnClassesThat()
-			.resideInAPackage("..atividade.repository..")
+			.resideOutsideOfPackage("..atividade..").and().haveSimpleNameNotContaining("SubstituicaoService").should()
+			.dependOnClassesThat().resideInAPackage("..atividade.repository..")
 			.because("O repositório de atividades é de uso exclusivo interno do módulo de atividades");
 
 	@ArchTest

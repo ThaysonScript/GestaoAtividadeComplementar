@@ -49,6 +49,17 @@ public class SolicitacaoAvaliacaoController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PatchMapping("/{solicitacaoId}/atividades/{atividadeId}/avaliacao")
+	public ResponseEntity<SolicitacaoAvaliadorDetalheResponseDTO> avaliarAtividade(@PathVariable Long solicitacaoId,
+			@PathVariable Long atividadeId, @RequestBody @Valid AvaliacaoSolicitacaoRequestDTO request,
+			Authentication authentication) {
+		if (authentication == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		facade.avaliarPorAtividade(solicitacaoId, atividadeId, request.decisao().name(), request.justificativa());
+		return ResponseEntity.ok(facade.detalharParaAvaliacao(solicitacaoId));
+	}
+
 	@GetMapping("/{id}/avaliacao")
 	public ResponseEntity<SolicitacaoAvaliadorDetalheResponseDTO> detalharParaAvaliacao(@PathVariable Long id) {
 		SolicitacaoAvaliadorDetalheResponseDTO response = facade.detalharParaAvaliacao(id);

@@ -48,6 +48,82 @@
         }
       </div>
 
+      <!-- Justificativa e Histórico -->
+      @if (carregandoHistorico()) {
+        <div class="flex items-center gap-2 text-xs text-[#707974] mb-2">
+          <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+          <span>Carregando histórico de pareceres...</span>
+        </div>
+      }
+      @if (erroHistorico()) {
+        <div
+          class="p-3 bg-[#fff8e1] text-[#7a5900] rounded-lg border border-[#ffe082] text-xs font-medium flex items-start gap-2 mb-4"
+        >
+          <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">warning</span>
+          <span>{{ erroHistorico() }}</span>
+        </div>
+      }
+      @if (!carregandoHistorico() && pareceres().length > 0) {
+        <div class="bg-[#f8f9fa] border border-[#e1e3e4] rounded-lg p-4 mb-2">
+          <h3 class="text-sm font-semibold text-[#404945] mb-3">Justificativa da Pendência</h3>
+          @for (parecer of pareceres(); track parecer.id; let last = $last) {
+            @if (parecer.tipoParecer === 'CORRECAO') {
+              <div class="bg-[#fff8e1]/40 border border-[#ffe082] rounded-md p-3 mb-3">
+                <p class="text-[11px] font-semibold text-[#7a5900] mb-0.5">
+                  Observação do avaliador:
+                </p>
+                <p class="text-xs text-[#404945] leading-relaxed">
+                  {{ parecer.justificativa || 'Nenhuma justificativa informada.' }}
+                </p>
+                @if (parecer.observacoes) {
+                  <p class="text-[11px] font-semibold text-[#7a5900] mt-2 mb-0.5">
+                    Observações adicionais:
+                  </p>
+                  <p class="text-xs text-[#404945] leading-relaxed">{{ parecer.observacoes }}</p>
+                }
+              </div>
+            }
+          }
+          <h3 class="text-sm font-semibold text-[#404945] mb-2 mt-4">Histórico de Avaliações</h3>
+          <ol class="relative border-l-2 border-[#e1e3e4] ml-1 pl-4 space-y-4">
+            @for (parecer of pareceres(); track parecer.id; let i = $index) {
+              <li class="relative">
+                <span
+                  class="absolute -left-[21px] top-1 w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                  [ngClass]="{
+                    'bg-[#ba1a1a]': parecer.tipoParecer === 'CORRECAO',
+                    'bg-[#b78103]': parecer.tipoParecer === 'MANTIDO',
+                    'bg-[#003629]': parecer.tipoParecer === 'PRE_APROVADO',
+                  }"
+                ></span>
+                <div class="bg-white border border-[#e1e3e4] rounded-md p-3 text-xs space-y-1">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-[#191c1d]">{{
+                      parecer.tipoParecer === 'CORRECAO'
+                        ? 'Correção necessária'
+                        : parecer.tipoParecer === 'PRE_APROVADO'
+                          ? 'Pré-aprovado'
+                          : 'Mantido'
+                    }}</span>
+                    <span class="text-[#707974]">{{
+                      parecer.dataAvaliacao | date: 'dd/MM/yyyy'
+                    }}</span>
+                  </div>
+                  @if (parecer.justificativa) {
+                    <p class="text-[#404945] leading-relaxed">{{ parecer.justificativa }}</p>
+                  }
+                  @if (parecer.observacoes) {
+                    <p class="text-[#7a5900] text-[10px] font-semibold mt-1">
+                      Obs: {{ parecer.observacoes }}
+                    </p>
+                  }
+                </div>
+              </li>
+            }
+          </ol>
+        </div>
+      }
+
       @if (!bloqueado()) {
         <form
           [formGroup]="edicaoForm"

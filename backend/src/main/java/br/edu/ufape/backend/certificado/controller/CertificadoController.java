@@ -33,8 +33,14 @@ public class CertificadoController {
 		if (authentication == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		String emailEstudante = authentication.getName();
-		Resource resource = certificadoFacade.obterCertificado(id, emailEstudante);
+		Resource resource;
+		if (authentication.getAuthorities().stream().anyMatch(
+				a -> a.getAuthority().equals("ROLE_AVALIADOR") || a.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
+			resource = certificadoFacade.obterCertificadoSemRestricao(id);
+		} else {
+			String emailEstudante = authentication.getName();
+			resource = certificadoFacade.obterCertificado(id, emailEstudante);
+		}
 		String contentType = "application/pdf";
 		try {
 			Path path = resource.getFile().toPath();
