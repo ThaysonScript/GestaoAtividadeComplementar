@@ -149,4 +149,52 @@ describe('AutenticacaoService', () => {
     service.saveToken('singletoken');
     expect(service.perfilAtual()).toBeNull();
   });
+
+  it('deve salvar sessao corretamente', () => {
+    service.salvarSessao({ token: 'token123', tipo: 'Bearer' } as any);
+    expect(service.getToken()).toBe('token123');
+  });
+
+  it('deve verificar se esta autenticado', () => {
+    expect(service.estaAutenticado()).toBe(false);
+    service.saveToken('token', 'Bearer');
+    expect(service.estaAutenticado()).toBe(true);
+  });
+
+  it('deve obter role corretamente', () => {
+    service.saveToken(gerarJwtFake({ role: 'AVALIADOR' }), 'Bearer');
+    expect(service.getRole()).toBe('AVALIADOR');
+  });
+
+  it('deve encerrar sessao corretamente', () => {
+    service.saveToken('token', 'Bearer');
+    service.encerrarSessao();
+    expect(service.getToken()).toBeNull();
+  });
+
+  it('deve traduzir erro 409 no cadastro', () => {
+    let mensagem = '';
+    service.cadastrar({ fullName: 'A', emailOrRegistration: 'b', password: 'c' }).subscribe({
+      error: (e: Error) => (mensagem = e.message),
+    });
+    httpMock
+      .expectOne(`${API_BASE_URL}/auth/cadastro`)
+      .flush({ message: 'Conflito' }, { status: 409, statusText: 'Conflict' });
+    expect(mensagem).toBe('Este e-mail já está cadastrado.');
+  });
+
+  it('deve traduzir erro 0 no login', () => {
+    let mensagem = '';
+    service.login({ emailOrRegistration: 'a', password: 'b' } as any).subscribe({
+      error: (e: Error) => (mensagem = e.message),
+    });
+    const req = httpMock.expectOne(LOGIN_URL);
+    req.error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown' });
+    expect(mensagem).toBe('Não foi possível conectar ao servidor. Verifique sua conexão.');
+  });
+
+  it('deve retornar null quando perfilAtual nao encontra role', () => {
+    service.saveToken(gerarJwtFake({ sub: '1' }), 'Bearer');
+    expect(service.perfilAtual()).toBeNull();
+  });
 });
