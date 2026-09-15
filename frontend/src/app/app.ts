@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './core/components/navbar/navbar.component';
+import { FooterComponent } from './core/components/footer/footer.component';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

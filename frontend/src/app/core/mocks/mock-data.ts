@@ -65,6 +65,17 @@ export const ATIVIDADES_MOCK: Atividade[] = [
     dataCadastro: '2026-06-06T14:00:00',
     status: 'PENDENTE',
   },
+  {
+    id: 5,
+    titulo: 'Oficina de Desenvolvimento Mobile',
+    instituicaoResponsavel: 'UFAPE',
+    dataRealizacao: '2026-07-10',
+    cargaHorariaEmHoras: 20,
+    natureza: 'ACEX',
+    categoria: 'EXTENSAO',
+    dataCadastro: '2026-07-11T09:00:00',
+    status: 'COM_PENDENCIAS',
+  },
 ];
 
 // 2. Solicitações de Validação
@@ -302,6 +313,22 @@ export function obterRelatorioCalculado(email: string): RelatorioAtividades {
     totalHorasGeral: totalHorasAcc + totalHorasAcex,
   };
 }
+
+export const REVISAO_CONFIRMACAO_MOCK = {
+  solicitacaoId: 8,
+  itensCorrigidos: [
+    {
+      atividadeId: 3,
+      titulo: 'Iniciação Científica PIBIC/CNPq',
+      cargaHoraria: 45,
+      natureza: 'ACC',
+    },
+  ],
+  novosComprovantes: ['certificado_corrigido.pdf'],
+  observacoesAvaliador: 'Reenviar com assinatura digitalizada do orientador.',
+  statusAnterior: 'COM_PENDENCIAS',
+  statusNovo: 'SUBMETIDA',
+};
 
 export const ATIVIDADES_MOCK_INICIAIS: Atividade[] = ATIVIDADES_MOCK.map((a) => ({ ...a }));
 
